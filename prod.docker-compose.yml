@@ -1,0 +1,30 @@
+version: '3'
+
+name: soundglide_backend_prod
+
+services:
+  database:
+    restart: always
+    env_file: ./prod.env
+    image: postgres:14
+    ports:
+      - 4675:5432
+    volumes:
+      - database-data:/var/lib/postgres/data
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: soundglide
+  backend:
+    depends_on: 
+      - database
+    restart: always
+    env_file: ./prod.env
+    build:
+      context: .
+      dockerfile: prod.Dockerfile
+    ports:
+      - 80:3000
+
+volumes:
+  database-data:

@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -30,7 +30,7 @@ async function bootstrap() {
   const PORT = 3001;
 
   await app.listen(PORT, () => {
-    console.log(`Server started on http://localhost:${PORT}`);
+    Logger.warn(`Server started on http://localhost:${PORT}`);
   });
 }
 

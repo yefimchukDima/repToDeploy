@@ -1,6 +1,6 @@
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsOptional, IsString } from 'class-validator';
 
-export default class CreateUserDTO {
+export default class EditUserDTO {
   @IsOptional()
   @IsEmail()
   email?: string;
@@ -14,11 +14,15 @@ export default class CreateUserDTO {
   mobile_number?: string;
 
   @IsString()
-  password: string;
+  @IsOptional()
+  password?: string;
 
   @IsString()
   first_name: string;
 
   @IsString()
   last_name: string;
+
+  @IsBoolean()
+  isAdmin: boolean;
 }

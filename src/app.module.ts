@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmAsyncConfig } from './config/typeorm.config';
 import { AppLoggerMiddleware } from './middlewares/logger';
 import AuthModule from './modules/auth/auth.module';
-import CompanyAdminModule from './modules/company_admin/company_admin.module';
 import UserModule from './modules/user/user.module';
 
 @Module({
@@ -17,7 +16,6 @@ import UserModule from './modules/user/user.module';
     TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     AuthModule,
     UserModule,
-    CompanyAdminModule,
   ],
 })
 export class AppModule implements NestModule {

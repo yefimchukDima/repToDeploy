@@ -5,17 +5,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import CompanyAdminEntity from 'src/entities/company_admin.entity';
 import UserEntity from 'src/entities/user.entity';
-import CompanyAdminService from 'src/modules/company_admin/company_admin.service';
 import UserService from 'src/modules/user/user.service';
 
 @Injectable()
 export default class AuthService {
-  constructor(
-    private readonly userService: UserService,
-    private readonly companyAdminService: CompanyAdminService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   async autheticateUser(
     mobile_number: string,
@@ -26,21 +21,6 @@ export default class AuthService {
     });
 
     if (!user) throw new NotFoundException('User not found');
-
-    await this.verifyPassword(password, user.password);
-
-    return user;
-  }
-
-  async autheticateCompanyAdmin(
-    email: string,
-    password: string,
-  ): Promise<CompanyAdminEntity> {
-    const user = await this.companyAdminService.getOneBy({
-      email,
-    });
-
-    if (!user) throw new NotFoundException('Company admin not found');
 
     await this.verifyPassword(password, user.password);
 

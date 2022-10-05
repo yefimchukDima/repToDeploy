@@ -19,8 +19,10 @@ export class UserJwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate({ id }: UserJwtPayload) {
-    return await this.userService.getOneBy({
+    const user = await this.userService.getOneBy({
       id,
     });
+
+    return user;
   }
 }

@@ -3,11 +3,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import VerificationCodeEntity from './verification_code.entity';
 
-@Entity()
+@Entity({
+  name: 'user'
+})
 export default class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -47,4 +51,7 @@ export default class UserEntity {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToMany(() => VerificationCodeEntity, (vc) => vc.user)
+  verificationCodes: VerificationCodeEntity[]
 }

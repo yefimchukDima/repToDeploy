@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -16,10 +17,18 @@ export default class UserEntity {
   })
   email: string;
 
-  @Column()
-  mobile_number: string;
+  @Column({
+    nullable: true,
+  })
+  username?: string;
+
+  @Column({
+    nullable: true,
+  })
+  mobile_number?: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column()
@@ -27,6 +36,11 @@ export default class UserEntity {
 
   @Column()
   last_name: string;
+
+  @Column({
+    default: false,
+  })
+  isAdmin: boolean;
 
   @CreateDateColumn()
   created_at: Date;

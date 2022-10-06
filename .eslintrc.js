@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  extends: 'airbnb-typescript/base',
+  extends: ['airbnb-typescript/base', 'prettier'],
   plugins: ['import', 'prettier'],
   parserOptions: {
     project: './tsconfig.eslint.json',
@@ -13,5 +13,7 @@ module.exports = {
         format: ['camelCase'],
       },
     ],
+    'import/no-extraneous-dependencies': ['warn'],
+    '@typescript-eslint/no-redeclare': ['warn'],
   },
 };

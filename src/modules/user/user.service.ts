@@ -82,7 +82,7 @@ export default class UserService {
     }
   }
 
-  async editUser(userId: number, data: EditUserDTO) {
+  async editUser(userId: number, data: EditUserDTO): Promise<UserEntity> {
     const user = await this.getOneBy({
       id: userId,
     });
@@ -97,7 +97,7 @@ export default class UserService {
     if (data.password) user.password = await createPassword(data.password);
 
     try {
-      await this.userRepo.save(user);
+      return await this.userRepo.save(user);
     } catch (error) {
       throw new InternalServerErrorException(
         EDITING_REGISTER_ERROR('User') + error,

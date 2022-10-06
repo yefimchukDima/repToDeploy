@@ -12,7 +12,6 @@ import {
 import UserEntity from 'src/entities/user.entity';
 import RolesDecorator from '../auth/decorators/role.decorator';
 import JWTGuard from '../auth/guards/jwt.guard';
-// import { RolesGuard } from '../auth/guards/role.guard';
 import CreateUserDTO from './dto/create.dto';
 import EditUserDTO from './dto/edit.dto';
 import UserService from './user.service';
@@ -37,7 +36,7 @@ export default class UserController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/get/id/:userId')
-  async getUserById(@Param('userId') id: number) {
+  async getUserById(@Param('userId') id: number): Promise<UserEntity> {
     const user = await this.userService.getOneBy({
       id,
     });
@@ -47,7 +46,7 @@ export default class UserController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/get/phone/:phone')
-  async getUserByPhone(@Param('phone') phone: string) {
+  async getUserByPhone(@Param('phone') phone: string): Promise<UserEntity> {
     const user = await this.userService.getOneBy({
       mobile_number: phone,
     });
@@ -55,7 +54,6 @@ export default class UserController {
     return user;
   }
 
-  // @UseGuards(JWTGuard, RolesGuard)
   @UseGuards(JWTGuard)
   @RolesDecorator('admin')
   @Patch('/edit/:userId')

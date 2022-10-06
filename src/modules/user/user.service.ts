@@ -13,12 +13,16 @@ import CreateUserDTO from './dto/create.dto';
 import {
   CREATING_REGISTER_ERROR,
   EDITING_REGISTER_ERROR,
+  PASSWORD_EDITION,
   VERIFICATION_CODE_GENERATION,
 } from 'src/utils/error-messages';
 import { createPassword } from '../auth/utils/create_password';
 import EditUserDTO from './dto/edit.dto';
 import VerificationCodeEntity from 'src/entities/verification_code.entity';
 import ValidateCodeDTO from './dto/validate-code.dto';
+import isVerificationCodeExpired from 'src/utils/isVerificationCodeExpired';
+import PasswordResetTokenEntity from 'src/entities/password_reset_token.entity';
+import ChangePasswordDTO from './dto/change-password.dto';
 
 @Injectable()
 export default class UserService {
@@ -27,6 +31,8 @@ export default class UserService {
     private readonly userRepo: Repository<UserEntity>,
     @InjectRepository(VerificationCodeEntity)
     private readonly verificationCodeRepo: Repository<VerificationCodeEntity>,
+    @InjectRepository(PasswordResetTokenEntity)
+    private readonly passwordResetTokenRepo: Repository<PasswordResetTokenEntity>,
   ) {}
 
   async getOneBy(
@@ -130,9 +136,7 @@ export default class UserService {
       Check if the 5 min expiration time passed, if so, delete it 
       and proceed with creation of another code
       */
-      const isExp =
-        +verificationCode.expTime - Math.floor(new Date().getTime() / 1000) <=
-        0;
+      const isExp = isVerificationCodeExpired(verificationCode);
 
       if (!isExp) throw new ConflictException('Code already exists');
       try {
@@ -157,6 +161,7 @@ export default class UserService {
     }
   }
 
+  // Normal code verification
   async validateVerificationCode(data: ValidateCodeDTO): Promise<UserEntity> {
     const user = await this.getOneBy({
       mobile_number: data.mobile_number,
@@ -172,8 +177,7 @@ export default class UserService {
 
     if (!verificationCode) throw new NotFoundException('Code not found!');
 
-    const isExp =
-      +verificationCode.expTime - Math.floor(new Date().getTime() / 1000) <= 0;
+    const isExp = isVerificationCodeExpired(verificationCode);
 
     if (isExp) throw new BadRequestException('Code expired!');
 
@@ -187,6 +191,72 @@ export default class UserService {
       return user;
     } catch (e) {
       throw new InternalServerErrorException(e);
+    }
+  }
+
+  // Code verification for password resetting
+  async validateVerificationCodePasswordReset(data: ValidateCodeDTO): Promise<{ passwordResetToken: string }> {
+    const user = await this.getOneBy({
+      mobile_number: data.mobile_number,
+    });
+
+    if (!user) throw new NotFoundException('User not found!');
+
+    const verificationCode = await this.verificationCodeRepo.findOneBy({
+      user: {
+        id: user.id,
+      },
+    });
+
+    if (!verificationCode) throw new NotFoundException('Code not found!');
+
+    const isExp = isVerificationCodeExpired(verificationCode);
+
+    if (isExp) throw new BadRequestException('Code expired!');
+
+    if (verificationCode.code !== data.code) {
+      throw new UnauthorizedException('Invalid code!');
+    }
+
+    try {
+      await this.verificationCodeRepo.remove(verificationCode);
+
+      const instance = new PasswordResetTokenEntity();
+
+      instance.token = await createPassword(user.mobile_number);
+      instance.user = user;
+
+      const resetToken = await this.passwordResetTokenRepo.save(instance);
+
+      return { passwordResetToken: resetToken.token };
+    } catch (e) {
+      throw new InternalServerErrorException(e);
+    }
+  }
+
+  async changePassword(data: ChangePasswordDTO): Promise<UserEntity> {
+    const token = await this.passwordResetTokenRepo.findOne({
+      where: {
+        token: data.resetToken,
+      },
+      relations: {
+        user: true,
+      },
+    });
+
+    if (!token) throw new NotFoundException('Token not found!');
+
+    try {
+      const user = await this.editUser(token.user.id, {
+        ...token.user,
+        password: data.newPassword,
+      });
+
+      await this.passwordResetTokenRepo.remove(token);
+
+      return user;
+    } catch (e) {
+      throw new InternalServerErrorException(PASSWORD_EDITION + e);
     }
   }
 }

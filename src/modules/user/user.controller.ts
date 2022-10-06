@@ -7,11 +7,13 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import UserEntity from 'src/entities/user.entity';
 import JWTGuard from '../auth/guards/jwt.guard';
+import ChangePasswordDTO from './dto/change-password.dto';
 import CreateUserDTO from './dto/create.dto';
 import EditUserDTO from './dto/edit.dto';
 import ValidateCodeDTO from './dto/validate-code.dto';
@@ -82,6 +84,27 @@ export default class UserController {
     @Body() data: ValidateCodeDTO,
   ): Promise<UserEntity> {
     const user = await this.userService.validateVerificationCode(data);
+
+    return user;
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post('/validate-verification-code-password-reset')
+  @HttpCode(200)
+  async validateVerificationCodePasswordReset(
+    @Body() data: ValidateCodeDTO,
+  ): Promise<{ passwordResetToken: string }> {
+    const token = await this.userService.validateVerificationCodePasswordReset(
+      data,
+    );
+
+    return token;
+  }
+
+  @Put('/change-password')
+  @HttpCode(200)
+  async changePassword(@Body() data: ChangePasswordDTO): Promise<UserEntity> {
+    const user = await this.userService.changePassword(data);
 
     return user;
   }

@@ -7,10 +7,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import PasswordResetTokenEntity from './password_reset_token.entity';
 import VerificationCodeEntity from './verification_code.entity';
 
 @Entity({
-  name: 'user'
+  name: 'user',
 })
 export default class UserEntity {
   @PrimaryGeneratedColumn()
@@ -53,5 +54,8 @@ export default class UserEntity {
   updated_at: Date;
 
   @OneToMany(() => VerificationCodeEntity, (vc) => vc.user)
-  verificationCodes: VerificationCodeEntity[]
+  verificationCodes: VerificationCodeEntity[];
+
+  @OneToMany(() => PasswordResetTokenEntity, (prt) => prt.user)
+  passwordResetTokens: PasswordResetTokenEntity[];
 }

@@ -3,6 +3,7 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -13,6 +14,7 @@ import UserEntity from 'src/entities/user.entity';
 import JWTGuard from '../auth/guards/jwt.guard';
 import CreateUserDTO from './dto/create.dto';
 import EditUserDTO from './dto/edit.dto';
+import ValidateCodeDTO from './dto/validate-code.dto';
 import UserService from './user.service';
 
 @Controller('users')
@@ -55,6 +57,7 @@ export default class UserController {
     return user;
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(JWTGuard)
   @Patch('/edit/:userId')
   async editUser(@Param('userId') userId: number, @Body() data: EditUserDTO) {
@@ -70,5 +73,16 @@ export default class UserController {
     const code = await this.userService.generateVerificationCode(phone);
 
     return code;
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post('/validate-verification-code')
+  @HttpCode(200)
+  async validateVerificationCode(
+    @Body() data: ValidateCodeDTO,
+  ): Promise<UserEntity> {
+    const user = await this.userService.validateVerificationCode(data);
+
+    return user;
   }
 }

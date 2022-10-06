@@ -2,12 +2,14 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import UserEntity from 'src/entities/user.entity';
-import { UserExistsMiddleware } from 'src/middlewares/userExists';
+import VerificationCodeEntity from 'src/entities/verification_code.entity';
+import { UserIdExistsMiddleware } from 'src/middlewares/userIdExists';
+import { UserPhoneExistsMiddleware } from 'src/middlewares/userPhoneExists';
 import UserController from './user.controller';
 import UserService from './user.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity])],
+  imports: [TypeOrmModule.forFeature([UserEntity, VerificationCodeEntity])],
   providers: [UserService, JwtService],
   controllers: [UserController],
   exports: [UserService],
@@ -15,7 +17,14 @@ import UserService from './user.service';
 export default class UserModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(UserExistsMiddleware)
-      .forRoutes('users/edit/:userId');
+      .apply(UserIdExistsMiddleware)
+      .forRoutes('users/get/id/:userId', 'users/edit/:userId');
+
+    consumer
+      .apply(UserPhoneExistsMiddleware)
+      .forRoutes(
+        'users/get/phone/:phone',
+        'users/generate-verification-code/:phone',
+      );
   }
 }

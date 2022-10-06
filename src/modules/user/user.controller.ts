@@ -10,7 +10,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import UserEntity from 'src/entities/user.entity';
-import RolesDecorator from '../auth/decorators/role.decorator';
 import JWTGuard from '../auth/guards/jwt.guard';
 import CreateUserDTO from './dto/create.dto';
 import EditUserDTO from './dto/edit.dto';
@@ -20,6 +19,7 @@ import UserService from './user.service';
 export default class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post('/create/user')
   async createUser(@Body() data: CreateUserDTO): Promise<UserEntity> {
     const user = await this.userService.createUser(data);
@@ -27,6 +27,7 @@ export default class UserController {
     return user;
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post('/create/company-admin')
   async createCompanyAdmin(@Body() data: CreateUserDTO): Promise<UserEntity> {
     const user = await this.userService.createCompanyAdmin(data);
@@ -55,11 +56,19 @@ export default class UserController {
   }
 
   @UseGuards(JWTGuard)
-  @RolesDecorator('admin')
   @Patch('/edit/:userId')
   async editUser(@Param('userId') userId: number, @Body() data: EditUserDTO) {
     const user = await this.userService.editUser(userId, data);
 
     return user;
+  }
+
+  @Post('/generate-verification-code/:phone')
+  async generateVerificationCode(
+    @Param('phone') phone: string,
+  ): Promise<{ code: string }> {
+    const code = await this.userService.generateVerificationCode(phone);
+
+    return code;
   }
 }

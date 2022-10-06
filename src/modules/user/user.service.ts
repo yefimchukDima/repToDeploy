@@ -1,7 +1,10 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import UserEntity from 'src/entities/user.entity';
@@ -15,6 +18,7 @@ import {
 import { createPassword } from '../auth/utils/create_password';
 import EditUserDTO from './dto/edit.dto';
 import VerificationCodeEntity from 'src/entities/verification_code.entity';
+import ValidateCodeDTO from './dto/validate-code.dto';
 
 @Injectable()
 export default class UserService {
@@ -109,7 +113,9 @@ export default class UserService {
     }
   }
 
-  async generateVerificationCode(mobile_number: string): Promise<{ code: string }> {
+  async generateVerificationCode(
+    mobile_number: string,
+  ): Promise<{ code: string }> {
     const user = await this.getOneBy({
       mobile_number,
     });
@@ -125,7 +131,8 @@ export default class UserService {
       and proceed with creation of another code
       */
       const isExp =
-        +verificationCode.expTime - Math.floor(new Date().getTime() / 1000) <= 0;
+        +verificationCode.expTime - Math.floor(new Date().getTime() / 1000) <=
+        0;
 
       if (!isExp) throw new ConflictException('Code already exists');
       try {
@@ -147,6 +154,39 @@ export default class UserService {
       return { code: res.code };
     } catch (e) {
       throw new InternalServerErrorException(VERIFICATION_CODE_GENERATION + e);
+    }
+  }
+
+  async validateVerificationCode(data: ValidateCodeDTO): Promise<UserEntity> {
+    const user = await this.getOneBy({
+      mobile_number: data.mobile_number,
+    });
+
+    if (!user) throw new NotFoundException('User not found!');
+
+    const verificationCode = await this.verificationCodeRepo.findOneBy({
+      user: {
+        id: user.id,
+      },
+    });
+
+    if (!verificationCode) throw new NotFoundException('Code not found!');
+
+    const isExp =
+      +verificationCode.expTime - Math.floor(new Date().getTime() / 1000) <= 0;
+
+    if (isExp) throw new BadRequestException('Code expired!');
+
+    if (verificationCode.code !== data.code) {
+      throw new UnauthorizedException('Invalid code!');
+    }
+
+    try {
+      await this.verificationCodeRepo.remove(verificationCode);
+
+      return user;
+    } catch (e) {
+      throw new InternalServerErrorException(e);
     }
   }
 }

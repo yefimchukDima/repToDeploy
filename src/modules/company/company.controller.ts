@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import CompanyEntity from 'src/entities/company.entity';
 import JWTGuard from '../auth/guards/jwt.guard';
 import CompanyService from './company.service';
@@ -21,6 +22,10 @@ export default class CompanyController {
   constructor(private readonly companyService: CompanyService) {}
 
   @Post('create')
+  @ApiOperation({ summary: 'Create a company' })
+  @ApiResponse({
+    type: CompanyEntity,
+  })
   async createCompany(@Body() data: CreateCompanyDTO): Promise<CompanyEntity> {
     const company = await this.companyService.createCompany(data);
 
@@ -28,6 +33,10 @@ export default class CompanyController {
   }
 
   @UseGuards(JWTGuard)
+  @ApiOperation({ summary: 'Get all companies' })
+  @ApiResponse({
+    type: [CompanyEntity],
+  })
   @Get()
   async getAllCompanies(): Promise<CompanyEntity[]> {
     const companies = await this.companyService.getAll();
@@ -36,6 +45,10 @@ export default class CompanyController {
   }
 
   @UseGuards(JWTGuard)
+  @ApiOperation({ summary: 'Get a company by ID' })
+  @ApiResponse({
+    type: CompanyEntity,
+  })
   @Get('/get/id/:companyId')
   async getCompanyById(@Param('companyId') id: number): Promise<CompanyEntity> {
     const company = await this.companyService.getOneBy({
@@ -46,6 +59,10 @@ export default class CompanyController {
   }
 
   @UseGuards(JWTGuard)
+  @ApiOperation({ summary: 'Get a company by phone number' })
+  @ApiResponse({
+    type: CompanyEntity,
+  })
   @Get('/get/phone/:phone')
   async getCompanyByPhone(
     @Param('phone') phone: string,
@@ -58,6 +75,10 @@ export default class CompanyController {
   }
 
   @UseGuards(JWTGuard)
+  @ApiOperation({ summary: 'Edit a company' })
+  @ApiResponse({
+    type: CompanyEntity,
+  })
   @Patch('/edit/:companyId')
   async editCompany(
     @Param('companyId') id: number,

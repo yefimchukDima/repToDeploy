@@ -1,16 +1,20 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import UserEntity from './user.entity';
 
 @Entity({
-    name: 'password_reset_token'
+  name: 'password_reset_token',
 })
 export default class PasswordResetTokenEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @ApiProperty()
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    token: string;
+  @ApiProperty()
+  @Column()
+  token: string;
 
-    @ManyToOne(() => UserEntity, (u) => u.passwordResetTokens)
-    user: UserEntity;
+  @ApiProperty({ type: () => UserEntity })
+  @ManyToOne(() => UserEntity, (u) => u.passwordResetTokens)
+  user: UserEntity;
 }

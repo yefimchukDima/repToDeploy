@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import UserLoginDTO from '../user/dto/login.dto';
 import AuthService from './auth.service';
 
@@ -11,6 +11,7 @@ export default class AuthController {
     private readonly jwtService: JwtService,
   ) {}
 
+  @ApiOperation({ summary: 'User login' })
   @Post('login/user')
   @HttpCode(200)
   @ApiResponse({

@@ -27,7 +27,7 @@ async function bootstrap() {
 
   SwaggerModule.setup('api', app, swagger);
 
-  const PORT = 3001;
+  const PORT = 3000;
 
   await app.listen(PORT, () => {
     Logger.warn(`Server started on http://localhost:${PORT}`);

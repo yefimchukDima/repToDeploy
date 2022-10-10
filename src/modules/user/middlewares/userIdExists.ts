@@ -32,6 +32,9 @@ export class UserIdExistsMiddleware implements NestMiddleware {
             statusCode: 404,
             message: 'User not found!',
           });
+      })
+      .catch((e) => {
+        next(e);
       });
   }
 }

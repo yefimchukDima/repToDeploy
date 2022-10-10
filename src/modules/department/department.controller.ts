@@ -7,6 +7,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import DepartmentEntity from 'src/entities/department.entity';
 import JWTGuard from '../auth/guards/jwt.guard';
 import DepartmentService from './department.service';
@@ -18,6 +19,10 @@ export default class DepartmentController {
   constructor(private readonly departmentService: DepartmentService) {}
 
   @Post('create')
+  @ApiOperation({ summary: 'Create a department' })
+  @ApiResponse({
+    type: DepartmentEntity,
+  })
   async createDepartment(
     @Body() data: CreateDepartmentDTO,
   ): Promise<DepartmentEntity> {
@@ -27,6 +32,10 @@ export default class DepartmentController {
   }
 
   @UseGuards(JWTGuard)
+  @ApiOperation({ summary: 'Get all departments' })
+  @ApiResponse({
+    type: [DepartmentEntity],
+  })
   @Get()
   async getAllDepartments(): Promise<DepartmentEntity[]> {
     const departments = await this.departmentService.getAll({
@@ -39,6 +48,10 @@ export default class DepartmentController {
   }
 
   @UseGuards(JWTGuard)
+  @ApiOperation({ summary: 'Get a department by ID' })
+  @ApiResponse({
+    type: DepartmentEntity,
+  })
   @Get('/get/id/:departmentId')
   async getDepartmentById(
     @Param('departmentId') id: number,
@@ -51,6 +64,10 @@ export default class DepartmentController {
   }
 
   @UseGuards(JWTGuard)
+  @ApiOperation({ summary: 'Get a departement by phone number' })
+  @ApiResponse({
+    type: DepartmentEntity,
+  })
   @Get('/get/phone/:phone')
   async getDepartmentByPhone(
     @Param('phone') phone: string,
@@ -63,6 +80,10 @@ export default class DepartmentController {
   }
 
   @UseGuards(JWTGuard)
+  @ApiOperation({ summary: 'Edit a department' })
+  @ApiResponse({
+    type: DepartmentEntity,
+  })
   @Patch('/edit/:departmentId')
   async editDepartment(
     @Param('departmentId') id: number,

@@ -11,12 +11,15 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import UserEntity from 'src/entities/user.entity';
 import JWTGuard from '../auth/guards/jwt.guard';
 import ChangePasswordDTO from './dto/change-password.dto';
 import CreateUserDTO from './dto/create.dto';
 import EditUserDTO from './dto/edit.dto';
 import ValidateCodeDTO from './dto/validate-code.dto';
+import ValidatePasswordResetTokenDTO from './dto/validate-password-reset-token.dto';
+import VerificationCodeDTO from './dto/verification-code.dto';
 import UserService from './user.service';
 
 @Controller('users')
@@ -24,6 +27,10 @@ export default class UserController {
   constructor(private readonly userService: UserService) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOperation({ summary: 'Create an user' })
+  @ApiResponse({
+    type: UserEntity,
+  })
   @Post('/create/user')
   async createUser(@Body() data: CreateUserDTO): Promise<UserEntity> {
     const user = await this.userService.createUser(data);
@@ -32,6 +39,10 @@ export default class UserController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOperation({ summary: 'Create a company admin' })
+  @ApiResponse({
+    type: UserEntity,
+  })
   @Post('/create/company-admin')
   async createCompanyAdmin(@Body() data: CreateUserDTO): Promise<UserEntity> {
     const user = await this.userService.createCompanyAdmin(data);
@@ -40,6 +51,10 @@ export default class UserController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOperation({ summary: 'Get an user by ID' })
+  @ApiResponse({
+    type: UserEntity,
+  })
   @Get('/get/id/:userId')
   async getUserById(@Param('userId') id: number): Promise<UserEntity> {
     const user = await this.userService.getOneBy({
@@ -50,6 +65,10 @@ export default class UserController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOperation({ summary: 'Get an user by phone number' })
+  @ApiResponse({
+    type: UserEntity,
+  })
   @Get('/get/phone/:phone')
   async getUserByPhone(@Param('phone') phone: string): Promise<UserEntity> {
     const user = await this.userService.getOneBy({
@@ -60,7 +79,11 @@ export default class UserController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOperation({ summary: 'Edit an user' })
   @UseGuards(JWTGuard)
+  @ApiResponse({
+    type: UserEntity,
+  })
   @Patch('/edit/:userId')
   async editUser(@Param('userId') userId: number, @Body() data: EditUserDTO) {
     const user = await this.userService.editUser(userId, data);
@@ -69,15 +92,23 @@ export default class UserController {
   }
 
   @Post('/generate-verification-code/:phone')
+  @ApiOperation({ summary: 'Generate a verification code' })
+  @ApiResponse({
+    type: VerificationCodeDTO,
+  })
   async generateVerificationCode(
     @Param('phone') phone: string,
-  ): Promise<{ code: string }> {
+  ): Promise<VerificationCodeDTO> {
     const code = await this.userService.generateVerificationCode(phone);
 
     return code;
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOperation({ summary: 'Validate a normal verification code' })
+  @ApiResponse({
+    type: UserEntity,
+  })
   @Post('/validate-verification-code')
   @HttpCode(200)
   async validateVerificationCode(
@@ -89,11 +120,17 @@ export default class UserController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOperation({
+    summary: 'Validate a verification code for password resetting',
+  })
+  @ApiResponse({
+    type: ValidatePasswordResetTokenDTO,
+  })
   @Post('/validate-verification-code-password-reset')
   @HttpCode(200)
   async validateVerificationCodePasswordReset(
     @Body() data: ValidateCodeDTO,
-  ): Promise<{ passwordResetToken: string }> {
+  ): Promise<ValidatePasswordResetTokenDTO> {
     const token = await this.userService.validateVerificationCodePasswordReset(
       data,
     );
@@ -101,7 +138,12 @@ export default class UserController {
     return token;
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Put('/change-password')
+  @ApiOperation({ summary: 'Change a user password' })
+  @ApiResponse({
+    type: UserEntity,
+  })
   @HttpCode(200)
   async changePassword(@Body() data: ChangePasswordDTO): Promise<UserEntity> {
     const user = await this.userService.changePassword(data);

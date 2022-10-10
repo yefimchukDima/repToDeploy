@@ -31,7 +31,9 @@ export default class CompanyService {
     return company;
   }
 
-  async getAll(filter?: FindManyOptions<CompanyEntity>): Promise<CompanyEntity[]> {
+  async getAll(
+    filter?: FindManyOptions<CompanyEntity>,
+  ): Promise<CompanyEntity[]> {
     const departments = await this.companyRepo.find(filter);
 
     return departments;
@@ -54,11 +56,7 @@ export default class CompanyService {
 
     instance.name = data.name;
     instance.mobile_number = data.mobile_number;
-    instance.button_type = data.button_type;
     instance.website_url = data.website_url;
-    instance.button_text = data.button_text;
-    instance.button_effect = data.button_effect;
-    instance.button_color = data.button_color;
     instance.user = user;
 
     try {
@@ -81,10 +79,6 @@ export default class CompanyService {
     company.name = data.name;
     company.website_url = data.website_url;
     company.mobile_number = data.mobile_number;
-    company.button_type = data.button_type;
-    company.button_text = data.button_text;
-    company.button_effect = data.button_effect;
-    company.button_color = data.button_color;
 
     try {
       return await this.companyRepo.save(company);

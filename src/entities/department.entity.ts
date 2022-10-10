@@ -51,18 +51,6 @@ export default class DepartmentEntity {
   image_url?: string;
 
   @ApiProperty()
-  @Column({
-    nullable: true,
-  })
-  button_text?: string;
-
-  @ApiProperty()
-  @Column({
-    nullable: true,
-  })
-  button_color?: string;
-
-  @ApiProperty()
   @CreateDateColumn()
   created_at: Date;
 

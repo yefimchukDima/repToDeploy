@@ -37,18 +37,4 @@ export default class EditDepartmentDTO {
   @IsOptional()
   @IsUrl()
   image_url?: string;
-
-  @ApiProperty({
-    nullable: true,
-  })
-  @IsOptional()
-  @IsString()
-  button_text?: string;
-
-  @ApiProperty({
-    nullable: true,
-  })
-  @IsOptional()
-  @IsString()
-  button_color?: string;
 }

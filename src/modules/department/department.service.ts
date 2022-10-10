@@ -61,8 +61,6 @@ export default class DepartmentService {
     instance.image_url = data.image_url;
     instance.email = data.email;
     instance.company = company;
-    instance.button_color = data.button_color;
-    instance.button_text = data.button_text;
     instance.department = data.department;
 
     try {
@@ -82,8 +80,6 @@ export default class DepartmentService {
       id: departmentId,
     });
 
-    department.button_color = data.button_color;
-    department.button_text = data.button_text;
     department.department = data.department;
     department.email = data.email;
     department.image_url = data.image_url;

@@ -44,20 +44,6 @@ export default class CreateDepartmentDTO {
   @IsUrl()
   image_url?: string;
 
-  @ApiProperty({
-    nullable: true,
-  })
-  @IsOptional()
-  @IsString()
-  button_text?: string;
-
-  @ApiProperty({
-    nullable: true,
-  })
-  @IsOptional()
-  @IsString()
-  button_color?: string;
-
   @ApiProperty()
   @IsNumber()
   companyId: number;

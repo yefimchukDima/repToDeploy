@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import CompanyEntity from 'src/entities/company.entity';
+import DepartmentEntity from 'src/entities/department.entity';
 import JWTGuard from '../auth/guards/jwt.guard';
 import CompanyService from './company.service';
 import CreateCompanyDTO from './dto/create.dto';
@@ -87,5 +88,19 @@ export default class CompanyController {
     const company = await this.companyService.editCompany(id, data);
 
     return company;
+  }
+
+  @UseGuards(JWTGuard)
+  @ApiOperation({ summary: "Get a company's departments" })
+  @ApiResponse({
+    type: [DepartmentEntity],
+  })
+  @Get('/departments/:companyId')
+  async getCompanyDepartments(
+    @Param('companyId') id: number,
+  ): Promise<DepartmentEntity[]> {
+    const departments = await this.companyService.getCompanyDepartments(id);
+
+    return departments;
   }
 }

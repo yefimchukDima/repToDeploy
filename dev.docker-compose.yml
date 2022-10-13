@@ -12,7 +12,7 @@ services:
       - database-data:/var/lib/postgres/data
     environment:
       POSTGRES_USER: soundglide
-      POSTGRES_PASSWORD: S0vndg1id3
+      POSTGRES_PASSWORD: 9&UJ9@h&y09TGl1U
       POSTGRES_DB: soundglide
 
 volumes:

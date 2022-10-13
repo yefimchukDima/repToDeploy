@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import CompanyEntity from 'src/entities/company.entity';
+import DepartmentEntity from 'src/entities/department.entity';
 import {
   CREATING_REGISTER_ERROR,
   EDITING_REGISTER_ERROR,
@@ -20,6 +21,8 @@ export default class CompanyService {
   constructor(
     @InjectRepository(CompanyEntity)
     private readonly companyRepo: Repository<CompanyEntity>,
+    @InjectRepository(DepartmentEntity)
+    private readonly departmentRepo: Repository<DepartmentEntity>,
     private readonly userService: UserService,
   ) {}
 
@@ -87,5 +90,21 @@ export default class CompanyService {
         EDITING_REGISTER_ERROR('Company') + error,
       );
     }
+  }
+
+  async getCompanyDepartments(companyId: number): Promise<DepartmentEntity[]> {
+    const company = await this.getOneBy({
+      id: companyId,
+    });
+
+    const departments = await this.departmentRepo.find({
+      where: {
+        company: {
+          id: company.id,
+        },
+      },
+    });
+
+    return departments;
   }
 }

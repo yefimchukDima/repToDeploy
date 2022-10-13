@@ -6,6 +6,7 @@ import { AppLoggerMiddleware } from './middlewares/logger';
 import AuthModule from './modules/auth/auth.module';
 import CompanyModule from './modules/company/company.module';
 import DepartmentModule from './modules/department/department.module';
+import MessagesModule from './modules/messages/messages.module';
 import UserModule from './modules/user/user.module';
 
 @Module({
@@ -20,6 +21,7 @@ import UserModule from './modules/user/user.module';
     UserModule,
     CompanyModule,
     DepartmentModule,
+    MessagesModule,
   ],
 })
 export class AppModule implements NestModule {

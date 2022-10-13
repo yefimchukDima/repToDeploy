@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import CompanyEntity from './company.entity';
+import DepartmentEntity from './department.entity';
 import PasswordResetTokenEntity from './password_reset_token.entity';
 import VerificationCodeEntity from './verification_code.entity';
 
@@ -76,4 +77,7 @@ export default class UserEntity {
   @ApiProperty({ type: () => CompanyEntity })
   @OneToMany(() => CompanyEntity, (c) => c.user)
   companies: CompanyEntity[];
+
+  @OneToMany(() => DepartmentEntity, (d) => d.user)
+  departments: DepartmentEntity[];
 }

@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import CompanyEntity from './company.entity';
+import UserEntity from './user.entity';
 
 @Entity({
   name: 'department',
@@ -61,4 +62,7 @@ export default class DepartmentEntity {
   @ApiProperty({ type: () => CompanyEntity })
   @ManyToOne(() => CompanyEntity, (c) => c.departments)
   company: CompanyEntity;
+
+  @ManyToOne(() => UserEntity, (u) => u.departments)
+  user: DepartmentEntity;
 }

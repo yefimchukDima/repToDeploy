@@ -12,7 +12,7 @@ export default class AuthController {
   ) {}
 
   @ApiOperation({ summary: 'User login' })
-  @Post('login/user')
+  @Post('login')
   @HttpCode(200)
   @ApiResponse({
     schema: {

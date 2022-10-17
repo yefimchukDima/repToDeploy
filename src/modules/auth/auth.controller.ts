@@ -25,7 +25,7 @@ export default class AuthController {
   })
   async loginUser(@Body() data: UserLoginDTO): Promise<{ token: string }> {
     const { id, email, mobile_number, first_name, last_name } =
-      await this.authService.autheticateUser(data.mobile_number, data.password);
+      await this.authService.autheticateUser(data.login, data.password);
 
     const token = await this.jwtService.signAsync({
       id,

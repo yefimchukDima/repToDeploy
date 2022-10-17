@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import UserEntity from 'src/entities/user.entity';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
 import CreateUserDTO from './dto/create.dto';
 import {
   CREATING_REGISTER_ERROR,
@@ -35,10 +35,14 @@ export default class UserService {
     private readonly passwordResetTokenRepo: Repository<PasswordResetTokenEntity>,
   ) {}
 
-  async getOneBy(
-    filter: FindOptionsWhere<UserEntity> | FindOptionsWhere<UserEntity>[],
-  ): Promise<UserEntity> {
+  async getOneBy(filter: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
     const user = await this.userRepo.findOneBy(filter);
+
+    return user;
+  }
+
+  async getOne(filter: FindOneOptions<UserEntity>): Promise<UserEntity> {
+    const user = await this.userRepo.findOne(filter);
 
     return user;
   }
@@ -195,7 +199,9 @@ export default class UserService {
   }
 
   // Code verification for password resetting
-  async validateVerificationCodePasswordReset(data: ValidateCodeDTO): Promise<{ passwordResetToken: string }> {
+  async validateVerificationCodePasswordReset(
+    data: ValidateCodeDTO,
+  ): Promise<{ passwordResetToken: string }> {
     const user = await this.getOneBy({
       mobile_number: data.mobile_number,
     });

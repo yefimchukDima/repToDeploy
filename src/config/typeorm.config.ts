@@ -10,6 +10,20 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
   useFactory: async (
     configService: ConfigService,
   ): Promise<TypeOrmModuleOptions> => {
+    console.log({
+      type: 'postgres',
+      username: configService.get('DB_USER'),
+      password: configService.get('DB_PASS'),
+      host: configService.get('DB_HOST'),
+      port: +configService.get('DB_PORT'),
+      database: configService.get('DB_NAME'),
+      synchronize: true,
+      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+      migrations: [__dirname + '/../migrations/*{.ts,.js}'],
+      autoLoadEntities: true,
+      logging: false,
+    });
+    
     return {
       type: 'postgres',
       username: configService.get('DB_USER'),

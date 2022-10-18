@@ -1,0 +1,54 @@
+{
+    "containerDefinitions": [
+        {
+            "essential": true,
+            "name": "nest",
+            "portMappings": [
+                {
+                    "containerPort": 3000,
+                    "hostPort": 80
+                }
+            ]
+        },
+        {
+            "environment": [
+                {
+                    "name": "POSTGRES_PASSWORD:${DB_PASS",
+                    "value": "POSTGRES_PASSWORD:${DB_PASS}"
+                },
+                {
+                    "name": "POSTGRES_USER:${DB_USER",
+                    "value": "POSTGRES_USER:${DB_USER}"
+                },
+                {
+                    "name": "POSTGRES_DB:${DB_NAME",
+                    "value": "POSTGRES_DB:${DB_NAME}"
+                }
+            ],
+            "essential": true,
+            "image": "postgres:14",
+            "mountPoints": [
+                {
+                    "containerPath": "/var/lib/postgres/data",
+                    "sourceVolume": "Dev-Database-Data"
+                }
+            ],
+            "name": "database",
+            "portMappings": [
+                {
+                    "containerPort": 5432,
+                    "hostPort": 5432
+                }
+            ]
+        }
+    ],
+    "family": "",
+    "volumes": [
+        {
+            "host": {
+                "sourcePath": "dev-database-data"
+            },
+            "name": "Dev-Database-Data"
+        }
+    ]
+}

@@ -97,4 +97,4 @@ jobs:
           script_stop: true
           envs: IMAGE_TAG
           script: |
-            bash /home/ubuntu/deploy_scripts/deploy.sh ${IMAGE_TAG}
+            bash /home/ec2-user/deploy_scripts/deploy.sh ${IMAGE_TAG}

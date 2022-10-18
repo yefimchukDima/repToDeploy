@@ -13,15 +13,15 @@
         {
             "environment": [
                 {
-                    "name": "POSTGRES_PASSWORD:${DB_PASS",
+                    "name": "POSTGRES_PASSWORD:${DB_PASS}",
                     "value": "POSTGRES_PASSWORD:${DB_PASS}"
                 },
                 {
-                    "name": "POSTGRES_USER:${DB_USER",
+                    "name": "POSTGRES_USER:${DB_USER}",
                     "value": "POSTGRES_USER:${DB_USER}"
                 },
                 {
-                    "name": "POSTGRES_DB:${DB_NAME",
+                    "name": "POSTGRES_DB:${DB_NAME}",
                     "value": "POSTGRES_DB:${DB_NAME}"
                 }
             ],

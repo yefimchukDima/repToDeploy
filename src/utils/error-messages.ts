@@ -1,3 +1,5 @@
+export const GETTING_REGISTER_ERROR = (entity: string) => `There was an error getting a ${entity}`
+
 export const CREATING_REGISTER_ERROR = (entity: string) =>
   `There was an error during the ${entity} creation`;
 

@@ -13,6 +13,7 @@ import CreateUserDTO from './dto/create.dto';
 import {
   CREATING_REGISTER_ERROR,
   EDITING_REGISTER_ERROR,
+  GETTING_REGISTER_ERROR,
   PASSWORD_EDITION,
   VERIFICATION_CODE_GENERATION,
 } from 'src/utils/error-messages';
@@ -36,15 +37,27 @@ export default class UserService {
   ) {}
 
   async getOneBy(filter: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
-    const user = await this.userRepo.findOneBy(filter);
+    try {
+      const user = await this.userRepo.findOneBy(filter);
 
-    return user;
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        GETTING_REGISTER_ERROR('user') + error,
+      );
+    }
   }
 
   async getOne(filter: FindOneOptions<UserEntity>): Promise<UserEntity> {
-    const user = await this.userRepo.findOne(filter);
+    try {
+      const user = await this.userRepo.findOne(filter);
 
-    return user;
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        GETTING_REGISTER_ERROR('user') + error,
+      );
+    }
   }
 
   async createUser(data: CreateUserDTO): Promise<UserEntity> {

@@ -39,6 +39,6 @@ RUN /usr/local/bin/yarn install --frozen-lockfile
 
 COPY --from=builder /usr/src/app/dist ./dist
 
-RUN ls ./dist -a
+EXPOSE 3000
 
 CMD ["node", "dist/main"]

@@ -41,4 +41,4 @@ COPY --from=builder /usr/src/app/dist ./dist
 
 RUN ls ./dist -a
 
-CMD ["node", "dist/src/main"]
+CMD ["node", "dist/main"]

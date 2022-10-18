@@ -1,7 +1,5 @@
 version: '3.9'
 
-name: soundglide-backend-dev
-
 services:
   postgres:
     restart: always

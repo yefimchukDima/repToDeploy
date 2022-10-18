@@ -1,6 +1,6 @@
 version: '3.9'
 
-name: soundglide_backend_dev
+name: soundglide-backend-dev
 
 services:
   postgres:

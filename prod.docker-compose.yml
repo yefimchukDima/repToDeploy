@@ -1,6 +1,6 @@
 version: '3'
 
-name: soundglide_backend_prod
+name: soundglide-backend-prod
 
 services:
   database:

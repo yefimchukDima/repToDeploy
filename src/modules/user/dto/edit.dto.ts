@@ -3,9 +3,8 @@ import { IsBoolean, IsEmail, IsOptional, IsString } from 'class-validator';
 
 export default class EditUserDTO {
   @ApiProperty()
-  @IsOptional()
   @IsEmail()
-  email?: string;
+  email: string;
 
   @ApiProperty()
   @IsOptional()

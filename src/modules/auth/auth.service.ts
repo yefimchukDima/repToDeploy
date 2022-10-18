@@ -12,12 +12,9 @@ import UserService from 'src/modules/user/user.service';
 export default class AuthService {
   constructor(private readonly userService: UserService) {}
 
-  async autheticateUser(
-    mobile_number: string,
-    password: string,
-  ): Promise<UserEntity> {
-    const user = await this.userService.getOneBy({
-      mobile_number,
+  async autheticateUser(login: string, password: string): Promise<UserEntity> {
+    const user = await this.userService.getOne({
+      where: [{ email: login }, { mobile_number: login }],
     });
 
     if (!user) throw new NotFoundException('User not found');

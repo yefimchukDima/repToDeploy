@@ -2,9 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsEmail, IsOptional, IsString } from 'class-validator';
 
 export default class EditUserDTO {
-  @ApiProperty()
+  @ApiProperty({
+    example: 'a@a.com',
+  })
   @IsEmail()
-  email: string;
+  @IsOptional()
+  email?: string;
 
   @ApiProperty()
   @IsOptional()
@@ -23,11 +26,13 @@ export default class EditUserDTO {
 
   @ApiProperty()
   @IsString()
-  first_name: string;
+  @IsOptional()
+  first_name?: string;
 
   @ApiProperty()
   @IsString()
-  last_name: string;
+  @IsOptional()
+  last_name?: string;
 
   @ApiProperty()
   @IsBoolean()

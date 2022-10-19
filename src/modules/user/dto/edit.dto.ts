@@ -4,32 +4,43 @@ import { IsBoolean, IsEmail, IsOptional, IsString } from 'class-validator';
 export default class EditUserDTO {
   @ApiProperty({
     example: 'a@a.com',
+    nullable: true,
   })
   @IsEmail()
   @IsOptional()
   email?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    nullable: true,
+  })
   @IsOptional()
   @IsString()
   username?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    nullable: true,
+  })
   @IsOptional()
   @IsString()
   mobile_number?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    nullable: true,
+  })
   @IsString()
   @IsOptional()
   password?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    nullable: true,
+  })
   @IsString()
   @IsOptional()
   first_name?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    nullable: true,
+  })
   @IsString()
   @IsOptional()
   last_name?: string;

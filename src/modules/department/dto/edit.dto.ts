@@ -9,7 +9,9 @@ export default class EditDepartmentDTO {
   @IsString()
   department?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    nullable: true,
+  })
   @IsString()
   @IsOptional()
   title?: string;
@@ -27,6 +29,7 @@ export default class EditDepartmentDTO {
 
   @ApiProperty({
     example: 'a@a.com',
+    nullable: true,
   })
   @IsOptional()
   @IsEmail()

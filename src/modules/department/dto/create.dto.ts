@@ -15,7 +15,9 @@ export default class CreateDepartmentDTO {
   @IsString()
   department?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    nullable: true,
+  })
   @IsString()
   @IsOptional()
   title?: string;
@@ -33,6 +35,7 @@ export default class CreateDepartmentDTO {
 
   @ApiProperty({
     example: 'a@a.com',
+    nullable: true,
   })
   @IsOptional()
   @IsEmail()

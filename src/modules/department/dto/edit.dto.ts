@@ -11,7 +11,8 @@ export default class EditDepartmentDTO {
 
   @ApiProperty()
   @IsString()
-  title: string;
+  @IsOptional()
+  title?: string;
 
   @ApiProperty({
     nullable: true,
@@ -27,8 +28,9 @@ export default class EditDepartmentDTO {
   @ApiProperty({
     example: 'a@a.com',
   })
+  @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
   @ApiProperty({
     nullable: true,

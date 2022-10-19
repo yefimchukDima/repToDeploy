@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
+import { IsOptional } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -22,18 +23,21 @@ export default class UserEntity {
   id: number;
 
   @ApiProperty()
+  @IsOptional()
   @Column({
     nullable: true,
   })
-  email: string;
+  email?: string;
 
   @ApiProperty()
+  @IsOptional()
   @Column({
     nullable: true,
   })
   username?: string;
 
   @ApiProperty()
+  @IsOptional()
   @Column({
     nullable: true,
   })
@@ -45,16 +49,18 @@ export default class UserEntity {
   password: string;
 
   @ApiProperty()
+  @IsOptional()
   @Column({
     nullable: true,
   })
-  first_name: string;
+  first_name?: string;
 
   @ApiProperty()
+  @IsOptional()
   @Column({
     nullable: true,
   })
-  last_name: string;
+  last_name?: string;
 
   @ApiProperty()
   @Column({

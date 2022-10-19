@@ -22,7 +22,9 @@ export default class UserEntity {
   id: number;
 
   @ApiProperty()
-  @Column()
+  @Column({
+    nullable: true,
+  })
   email: string;
 
   @ApiProperty()
@@ -43,11 +45,15 @@ export default class UserEntity {
   password: string;
 
   @ApiProperty()
-  @Column()
+  @Column({
+    nullable: true,
+  })
   first_name: string;
 
   @ApiProperty()
-  @Column()
+  @Column({
+    nullable: true,
+  })
   last_name: string;
 
   @ApiProperty()

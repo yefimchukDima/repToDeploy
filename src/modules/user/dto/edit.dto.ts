@@ -31,5 +31,6 @@ export default class EditUserDTO {
 
   @ApiProperty()
   @IsBoolean()
+  @IsOptional()
   isAdmin: boolean;
 }

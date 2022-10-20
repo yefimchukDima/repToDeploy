@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUrl } from 'class-validator';
+import { IsArray, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export default class EditCompanyDTO {
   @ApiProperty()
@@ -11,6 +11,14 @@ export default class EditCompanyDTO {
   })
   @IsUrl()
   website_url: string;
+
+  @ApiProperty({
+    nullable: true,
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  keywords?: string[];
 
   @ApiProperty()
   @IsString()

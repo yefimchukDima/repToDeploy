@@ -31,6 +31,16 @@ export default class CompanyEntity {
   @Column()
   name: string;
 
+  @ApiProperty({
+    nullable: true,
+    required: false,
+  })
+  @Column('varchar', {
+    array: true,
+    nullable: true,
+  })
+  keywords?: string[];
+
   @ApiProperty({ type: () => UserEntity })
   @ManyToOne(() => UserEntity, (u) => u.companies)
   user: UserEntity;

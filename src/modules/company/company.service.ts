@@ -60,6 +60,7 @@ export default class CompanyService {
     instance.name = data.name;
     instance.mobile_number = data.mobile_number;
     instance.website_url = data.website_url;
+    instance.keywords = data.keywords;
     instance.user = user;
 
     try {
@@ -82,6 +83,7 @@ export default class CompanyService {
     company.name = data.name;
     company.website_url = data.website_url;
     company.mobile_number = data.mobile_number;
+    company.keywords = data.keywords;
 
     try {
       return await this.companyRepo.save(company);

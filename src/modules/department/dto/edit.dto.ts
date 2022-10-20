@@ -4,6 +4,7 @@ import { IsEmail, IsOptional, IsString, IsUrl } from 'class-validator';
 export default class EditDepartmentDTO {
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsOptional()
   @IsString()
@@ -11,6 +12,7 @@ export default class EditDepartmentDTO {
 
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -18,6 +20,7 @@ export default class EditDepartmentDTO {
 
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsOptional()
   @IsString()
@@ -30,6 +33,7 @@ export default class EditDepartmentDTO {
   @ApiProperty({
     example: 'a@a.com',
     nullable: true,
+    required: false,
   })
   @IsOptional()
   @IsEmail()
@@ -38,6 +42,7 @@ export default class EditDepartmentDTO {
   @ApiProperty({
     nullable: true,
     example: 'http://google.com',
+    required: false,
   })
   @IsOptional()
   @IsUrl()

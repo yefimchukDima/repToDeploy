@@ -10,6 +10,7 @@ import {
 export default class CreateDepartmentDTO {
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsOptional()
   @IsString()
@@ -17,6 +18,7 @@ export default class CreateDepartmentDTO {
 
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -24,6 +26,7 @@ export default class CreateDepartmentDTO {
 
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsOptional()
   @IsString()
@@ -36,6 +39,7 @@ export default class CreateDepartmentDTO {
   @ApiProperty({
     example: 'a@a.com',
     nullable: true,
+    required: false,
   })
   @IsOptional()
   @IsEmail()
@@ -44,6 +48,7 @@ export default class CreateDepartmentDTO {
   @ApiProperty({
     nullable: true,
     example: 'http://google.com',
+    required: false,
   })
   @IsOptional()
   @IsUrl()

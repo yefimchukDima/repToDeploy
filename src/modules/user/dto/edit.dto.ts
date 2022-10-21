@@ -5,6 +5,7 @@ export default class EditUserDTO {
   @ApiProperty({
     example: 'a@a.com',
     nullable: true,
+    required: false,
   })
   @IsEmail()
   @IsOptional()
@@ -12,6 +13,7 @@ export default class EditUserDTO {
 
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsOptional()
   @IsString()
@@ -19,6 +21,7 @@ export default class EditUserDTO {
 
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsOptional()
   @IsString()
@@ -26,6 +29,7 @@ export default class EditUserDTO {
 
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -33,6 +37,7 @@ export default class EditUserDTO {
 
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -40,6 +45,7 @@ export default class EditUserDTO {
 
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsString()
   @IsOptional()

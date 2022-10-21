@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString, IsUrl } from 'class-validator';
+import {
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 
 export default class CreateCompanyDTO {
   @ApiProperty()
@@ -15,6 +21,14 @@ export default class CreateCompanyDTO {
   @ApiProperty()
   @IsString()
   name: string;
+
+  @ApiProperty({
+    nullable: true,
+    required: false,
+  })
+  @IsOptional()
+  @IsArray()
+  keywords?: string[];
 
   @ApiProperty()
   @IsNumber()

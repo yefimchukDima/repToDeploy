@@ -4,6 +4,7 @@ import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 export default class CreateUserDTO {
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsOptional()
   @IsEmail()
@@ -11,6 +12,7 @@ export default class CreateUserDTO {
 
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsOptional()
   @IsString()
@@ -18,6 +20,7 @@ export default class CreateUserDTO {
 
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsOptional()
   @IsString()
@@ -30,6 +33,7 @@ export default class CreateUserDTO {
 
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -37,6 +41,7 @@ export default class CreateUserDTO {
 
   @ApiProperty({
     nullable: true,
+    required: false,
   })
   @IsString()
   @IsOptional()

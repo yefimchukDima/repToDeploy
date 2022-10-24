@@ -24,6 +24,7 @@ import ValidateCodeDTO from './dto/validate-code.dto';
 import isVerificationCodeExpired from 'src/utils/isVerificationCodeExpired';
 import PasswordResetTokenEntity from 'src/entities/password_reset_token.entity';
 import ChangePasswordDTO from './dto/change-password.dto';
+import UserHasEmailOrPasswordDTO from './dto/user-has-email-or-password.dto';
 
 @Injectable()
 export default class UserService {
@@ -275,5 +276,18 @@ export default class UserService {
     } catch (e) {
       throw new InternalServerErrorException(PASSWORD_EDITION + e);
     }
+  }
+
+  async userHasEmailOrPassword(
+    phone: string,
+  ): Promise<UserHasEmailOrPasswordDTO> {
+    const user = await this.getOneBy({
+      mobile_number: phone,
+    });
+
+    return {
+      email: !!user.email,
+      phone: !!user.mobile_number,
+    };
   }
 }

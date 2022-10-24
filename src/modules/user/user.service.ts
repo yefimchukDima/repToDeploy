@@ -61,9 +61,8 @@ export default class UserService {
   }
 
   async createUser(data: CreateUserDTO): Promise<UserEntity> {
-    const user = await this.getOneBy({
-      email: data.email,
-      mobile_number: data.mobile_number,
+    const user = await this.getOne({
+      where: [{ email: data.email }, { mobile_number: data.mobile_number }],
     });
 
     if (user) throw new ConflictException('User already exists!');
@@ -87,9 +86,8 @@ export default class UserService {
   }
 
   async createCompanyAdmin(data: CreateUserDTO): Promise<UserEntity> {
-    const user = await this.getOneBy({
-      email: data.email,
-      mobile_number: data.mobile_number,
+    const user = await this.getOne({
+      where: [{ email: data.email }, { mobile_number: data.mobile_number }],
     });
 
     if (user) throw new ConflictException('Company admin already exists!');

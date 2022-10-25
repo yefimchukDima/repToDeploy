@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString } from 'class-validator';
 
 export default class SendEmailDTO {
   @ApiProperty({
@@ -7,6 +7,17 @@ export default class SendEmailDTO {
   })
   @IsEmail()
   email: string;
+
+  @ApiProperty()
+  @IsString()
+  subject: string;
+
+  @ApiProperty({
+    nullable: true
+  })
+  @IsString()
+  @IsOptional()
+  html?: string;
 
   @ApiProperty({
     examples: ['example', '{key: value}'],

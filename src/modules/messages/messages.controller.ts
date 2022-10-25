@@ -9,14 +9,18 @@ export default class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
   @UseGuards(JWTGuard)
-  @Post('send-email')
+  @Post('send/email')
   async sendEmail(@Body() body: SendEmailDTO) {
-    await this.messagesService.sendEmail(body);
+    const email = await this.messagesService.sendEmail(body);
+
+    return email;
   }
 
   @UseGuards(JWTGuard)
-  @Post('send-sms')
+  @Post('send/sms')
   async sendSMS(@Body() body: SendSMSDTO) {
-    await this.messagesService.sendSMS(body);
+    const message = await this.messagesService.sendSMS(body);
+
+    return message;
   }
 }

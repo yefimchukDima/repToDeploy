@@ -25,13 +25,17 @@ export default class UserModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(UserIdExistsMiddleware)
-      .forRoutes('users/get/id/:userId', 'users/edit/:userId');
+      .forRoutes(
+        'users/get/id/:userId',
+        'users/edit/:userId',
+      );
 
     consumer
       .apply(UserPhoneExistsMiddleware)
       .forRoutes(
         'users/get/phone/:phone',
         'users/generate-verification-code/:phone',
+        'users/user-has-email-or-password/:phone'
       );
   }
 }

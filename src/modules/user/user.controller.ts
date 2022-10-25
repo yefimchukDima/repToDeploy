@@ -17,6 +17,7 @@ import JWTGuard from '../auth/guards/jwt.guard';
 import ChangePasswordDTO from './dto/change-password.dto';
 import CreateUserDTO from './dto/create.dto';
 import EditUserDTO from './dto/edit.dto';
+import UserHasEmailOrPasswordDTO from './dto/user-has-email-or-password.dto';
 import ValidateCodeDTO from './dto/validate-code.dto';
 import ValidatePasswordResetTokenDTO from './dto/validate-password-reset-token.dto';
 import VerificationCodeDTO from './dto/verification-code.dto';
@@ -149,5 +150,22 @@ export default class UserController {
     const user = await this.userService.changePassword(data);
 
     return user;
+  }
+
+  @Get('user-has-email-or-password/:phone')
+  @UseGuards(JWTGuard)
+  @ApiOperation({
+    summary:
+      'Check if user has e-mail or phone number for password resetting on mobile',
+  })
+  @ApiResponse({
+    type: UserHasEmailOrPasswordDTO,
+  })
+  async userHasEmailOrPhone(
+    @Param('phone') phone: string,
+  ): Promise<UserHasEmailOrPasswordDTO> {
+    const res = await this.userService.userHasEmailOrPassword(phone);
+
+    return res;
   }
 }

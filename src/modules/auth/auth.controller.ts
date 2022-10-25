@@ -4,6 +4,15 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import UserLoginDTO from '../user/dto/login.dto';
 import AuthService from './auth.service';
 
+type LoginResponse = {
+  id: number;
+  email?: string;
+  mobile_number?: string;
+  first_name?: string;
+  last_name?: string;
+  token: string;
+};
+
 @Controller('auth')
 export default class AuthController {
   constructor(
@@ -23,7 +32,7 @@ export default class AuthController {
       },
     },
   })
-  async loginUser(@Body() data: UserLoginDTO): Promise<{ token: string }> {
+  async loginUser(@Body() data: UserLoginDTO): Promise<LoginResponse> {
     const { id, email, mobile_number, first_name, last_name } =
       await this.authService.autheticateUser(data.login, data.password);
 
@@ -35,6 +44,6 @@ export default class AuthController {
       last_name,
     });
 
-    return { token };
+    return { id, email, mobile_number, first_name, last_name, token };
   }
 }

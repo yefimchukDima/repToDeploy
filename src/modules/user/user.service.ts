@@ -21,10 +21,14 @@ import { createPassword } from '../auth/utils/create_password';
 import EditUserDTO from './dto/edit.dto';
 import VerificationCodeEntity from 'src/entities/verification_code.entity';
 import ValidateCodeDTO from './dto/validate-code.dto';
-import isVerificationCodeExpired from 'src/utils/isVerificationCodeExpired';
+import isVerificationCodeExpired, {
+  MILLISECONDS_TO_SECONDS,
+} from 'src/utils/isVerificationCodeExpired';
 import PasswordResetTokenEntity from 'src/entities/password_reset_token.entity';
 import ChangePasswordDTO from './dto/change-password.dto';
 import UserHasEmailOrPasswordDTO from './dto/user-has-email-or-password.dto';
+
+const FIVE_MIN_TO_SECS = 300;
 
 @Injectable()
 export default class UserService {
@@ -167,6 +171,10 @@ export default class UserService {
 
     instance.code = String(code);
     instance.user = user;
+    instance.expTime = String(
+      Math.floor(new Date().getTime() / MILLISECONDS_TO_SECONDS) +
+        FIVE_MIN_TO_SECS,
+    );
 
     try {
       const res = await this.verificationCodeRepo.save(instance);

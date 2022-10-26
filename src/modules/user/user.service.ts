@@ -80,6 +80,7 @@ export default class UserService {
     instance.last_name = data.last_name;
     instance.mobile_number = data.mobile_number;
     instance.password = await createPassword(data.password);
+    instance.base64_image = data.base64_image;
 
     try {
       return await this.userRepo.save(instance);
@@ -106,6 +107,7 @@ export default class UserService {
     instance.last_name = data.last_name;
     instance.mobile_number = data.mobile_number;
     instance.password = await createPassword(data.password);
+    instance.base64_image = data.base64_image;
 
     try {
       return await this.userRepo.save(instance);
@@ -127,6 +129,7 @@ export default class UserService {
     user.last_name = data.last_name;
     user.mobile_number = data.mobile_number;
     user.username = data.username;
+    user.base64_image = data.base64_image;
 
     if (data.password) user.password = await createPassword(data.password);
 

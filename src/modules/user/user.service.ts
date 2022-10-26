@@ -26,7 +26,7 @@ import isVerificationCodeExpired, {
 } from 'src/utils/isVerificationCodeExpired';
 import PasswordResetTokenEntity from 'src/entities/password_reset_token.entity';
 import ChangePasswordDTO from './dto/change-password.dto';
-import UserHasEmailOrPasswordDTO from './dto/user-has-email-or-password.dto';
+import UserHasEmailOrPhoneDTO from './dto/user-has-email-or-phone.dto';
 
 const FIVE_MIN_TO_SECS = 300;
 
@@ -286,11 +286,11 @@ export default class UserService {
     }
   }
 
-  async userHasEmailOrPassword(
-    phone: string,
-  ): Promise<UserHasEmailOrPasswordDTO> {
-    const user = await this.getOneBy({
-      mobile_number: phone,
+  async userHasEmailOrPhone(
+    phoneEmail: string,
+  ): Promise<UserHasEmailOrPhoneDTO> {
+    const user = await this.getOne({
+      where: [{ mobile_number: phoneEmail }, { email: phoneEmail }],
     });
 
     return {

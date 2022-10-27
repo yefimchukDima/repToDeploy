@@ -153,7 +153,6 @@ export default class UserController {
   }
 
   @Get('user-has-email-or-phone/:phoneEmail')
-  @UseGuards(JWTGuard)
   @ApiOperation({
     summary:
       'Check if user has e-mail or phone number for password resetting on mobile',

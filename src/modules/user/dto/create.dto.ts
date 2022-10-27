@@ -46,4 +46,12 @@ export default class CreateUserDTO {
   @IsString()
   @IsOptional()
   last_name?: string;
+
+  @ApiProperty({
+    nullable: true,
+    required: false
+  })
+  @IsString()
+  @IsOptional()
+  base64_image?: string;
 }

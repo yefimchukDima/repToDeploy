@@ -69,6 +69,12 @@ export default class UserEntity {
   isAdmin: boolean;
 
   @ApiProperty()
+  @Column({
+    nullable: true
+  })
+  base64_image?: string;
+
+  @ApiProperty()
   @CreateDateColumn()
   created_at: Date;
 

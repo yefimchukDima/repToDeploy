@@ -55,4 +55,12 @@ export default class EditUserDTO {
   @IsBoolean()
   @IsOptional()
   isAdmin: boolean;
+
+  @ApiProperty({
+    nullable: true,
+    required: false
+  })
+  @IsString()
+  @IsOptional()
+  base64_image?: string;
 }

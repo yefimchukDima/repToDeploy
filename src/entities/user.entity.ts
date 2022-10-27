@@ -5,6 +5,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -12,6 +14,7 @@ import {
 import CompanyEntity from './company.entity';
 import DepartmentEntity from './department.entity';
 import PasswordResetTokenEntity from './password_reset_token.entity';
+import PendingInvitationsEntity from './pending_invitations.entity';
 import VerificationCodeEntity from './verification_code.entity';
 
 @Entity({
@@ -70,7 +73,7 @@ export default class UserEntity {
 
   @ApiProperty()
   @Column({
-    nullable: true
+    nullable: true,
   })
   base64_image?: string;
 
@@ -82,18 +85,30 @@ export default class UserEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ApiProperty({ type: () => VerificationCodeEntity })
+  @ApiProperty({ type: () => [VerificationCodeEntity] })
   @OneToMany(() => VerificationCodeEntity, (vc) => vc.user)
   verificationCodes: VerificationCodeEntity[];
 
-  @ApiProperty({ type: () => PasswordResetTokenEntity })
+  @ApiProperty({ type: () => [PasswordResetTokenEntity] })
   @OneToMany(() => PasswordResetTokenEntity, (prt) => prt.user)
   passwordResetTokens: PasswordResetTokenEntity[];
 
-  @ApiProperty({ type: () => CompanyEntity })
+  @ApiProperty({ type: () => [CompanyEntity] })
   @OneToMany(() => CompanyEntity, (c) => c.user)
   companies: CompanyEntity[];
 
+  @ApiProperty({ type: () => [DepartmentEntity] })
   @OneToMany(() => DepartmentEntity, (d) => d.user)
   departments: DepartmentEntity[];
+
+  @ApiProperty({ type: () => [UserEntity] })
+  @ManyToMany(() => UserEntity)
+  @JoinTable({
+    name: 'user_contacts',
+  })
+  contacts: UserEntity[];
+
+  @ApiProperty({ type: () => [PendingInvitationsEntity] })
+  @OneToMany(() => PendingInvitationsEntity, (pi) => pi.user)
+  pending_invitations: PendingInvitationsEntity[];
 }

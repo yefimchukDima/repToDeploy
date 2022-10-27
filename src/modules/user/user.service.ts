@@ -8,10 +8,16 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import UserEntity from 'src/entities/user.entity';
-import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
+import {
+  EntityManager,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import CreateUserDTO from './dto/create.dto';
 import {
   CREATING_REGISTER_ERROR,
+  DELETING_REGISTER_ERROR,
   EDITING_REGISTER_ERROR,
   GETTING_REGISTER_ERROR,
   PASSWORD_EDITION,
@@ -27,6 +33,9 @@ import isVerificationCodeExpired, {
 import PasswordResetTokenEntity from 'src/entities/password_reset_token.entity';
 import ChangePasswordDTO from './dto/change-password.dto';
 import UserHasEmailOrPhoneDTO from './dto/user-has-email-or-phone.dto';
+import ImportContactsDTO from './dto/import-contacts.dto';
+import PendingInvitationsEntity from 'src/entities/pending_invitations.entity';
+import MessagesService from '../messages/messages.service';
 
 const FIVE_MIN_TO_SECS = 300;
 
@@ -39,6 +48,9 @@ export default class UserService {
     private readonly verificationCodeRepo: Repository<VerificationCodeEntity>,
     @InjectRepository(PasswordResetTokenEntity)
     private readonly passwordResetTokenRepo: Repository<PasswordResetTokenEntity>,
+    @InjectRepository(PendingInvitationsEntity)
+    private readonly pendingInvitationsRepo: Repository<PendingInvitationsEntity>,
+    private readonly messagingService: MessagesService,
   ) {}
 
   async getOneBy(filter: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
@@ -300,5 +312,115 @@ export default class UserService {
       email: !!user.email,
       phone: !!user.mobile_number,
     };
+  }
+
+  async getUserContacts(
+    userId: number,
+  ): Promise<(UserEntity | PendingInvitationsEntity)[]> {
+    const user = await this.getOneBy({
+      id: userId,
+    });
+
+    let pendingInvitations = await this.getPendingInvitations(user.id);
+    pendingInvitations = pendingInvitations.map((pi) => ({
+      ...pi,
+      pending: true,
+    }));
+
+    return [...user.contacts, ...pendingInvitations];
+  }
+
+  async importUserContacts(
+    userId: number,
+    data: ImportContactsDTO,
+  ): Promise<void> {
+    const user = await this.getOneBy({ id: userId });
+
+    await this.userRepo.manager.transaction(async (manager: EntityManager) => {
+      for (const contact of data.contacts) {
+        const instance = new PendingInvitationsEntity();
+
+        instance.phone_number = contact;
+        instance.user = user;
+        instance.token = await createPassword(contact);
+
+        /* 
+          TODO: Download link first hit token validation on API, 
+          then go to app store/google play (get app store/google play
+          URL and make another request after validation)
+        */
+        try {
+          const pendingInvitation = await manager.save(
+            instance,
+          );
+          await this.messagingService.sendSMS({
+            message: `I want to send you a voice message on SoundGlide! 
+            Tap to download: ${process.env.SERVER_URL}/users/validate-invitation-token?token=${pendingInvitation.token}
+            `,
+            phone_number: contact,
+          });
+        } catch (error) {
+          throw new InternalServerErrorException(
+            'There was an error during contacts importing: ' + error,
+          );
+        }
+      }
+    });
+  }
+
+  async validateInvitationToken(token: string): Promise<void> {
+    const invitation = await this.pendingInvitationsRepo.findOneBy({
+      token,
+    });
+
+    if (!invitation) throw new NotFoundException('Invalid token!');
+
+    try {
+      await this.pendingInvitationsRepo.remove(invitation);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Could not validate invitation: ' + error,
+      );
+    }
+  }
+
+  async getPendingInvitations(
+    userId: number,
+  ): Promise<PendingInvitationsEntity[]> {
+    const user = await this.getOneBy({ id: userId });
+
+    const invitations = await this.pendingInvitationsRepo.findBy({
+      user: {
+        id: user.id,
+      },
+    });
+
+    return invitations;
+  }
+
+  async removeContactFromUser(userId: number, contactId: number): Promise<void> {
+    const user = await this.getOne({
+      where: {
+        id: userId,
+      },
+      relations: {
+        contacts: true,
+      },
+    });
+    const contact = await this.getOneBy({
+      id: contactId,
+    });
+
+    if (!contact) throw new NotFoundException('Contact not found!');
+
+    user.contacts = user.contacts.filter((x) => x.id !== contactId);
+
+    try {
+      await this.userRepo.save(user);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        DELETING_REGISTER_ERROR('contact') + error,
+      );
+    }
   }
 }

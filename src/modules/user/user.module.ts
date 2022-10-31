@@ -2,10 +2,12 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import PasswordResetTokenEntity from 'src/entities/password_reset_token.entity';
+import PendingInvitationsEntity from 'src/entities/pending_invitations.entity';
 import UserEntity from 'src/entities/user.entity';
 import VerificationCodeEntity from 'src/entities/verification_code.entity';
 import { UserIdExistsMiddleware } from 'src/modules/user/middlewares/userIdExists';
 import { UserPhoneExistsMiddleware } from 'src/modules/user/middlewares/userPhoneExists';
+import MessagesService from '../messages/messages.service';
 import UserController from './user.controller';
 import UserService from './user.service';
 
@@ -15,9 +17,10 @@ import UserService from './user.service';
       UserEntity,
       VerificationCodeEntity,
       PasswordResetTokenEntity,
+      PendingInvitationsEntity,
     ]),
   ],
-  providers: [UserService, JwtService],
+  providers: [UserService, JwtService, MessagesService],
   controllers: [UserController],
   exports: [UserService],
 })
@@ -28,6 +31,10 @@ export default class UserModule {
       .forRoutes(
         'users/get/id/:userId',
         'users/edit/:userId',
+        'users/get/contacts/:userId',
+        'users/import-contacts/:userId',
+        'users/get/pending-invitations/:userId',
+        'users/remove/contact/:userId/:contactId',
       );
 
     consumer
@@ -35,7 +42,7 @@ export default class UserModule {
       .forRoutes(
         'users/get/phone/:phone',
         'users/generate-verification-code/:phone',
-        'users/user-has-email-or-password/:phone'
+        'users/user-has-email-or-password/:phone',
       );
   }
 }

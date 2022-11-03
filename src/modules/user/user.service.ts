@@ -374,14 +374,6 @@ export default class UserService {
     });
 
     if (!invitation) throw new NotFoundException('Invalid token!');
-
-    try {
-      await this.pendingInvitationsRepo.remove(invitation);
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'Could not validate invitation: ' + error,
-      );
-    }
   }
 
   async getPendingInvitations(

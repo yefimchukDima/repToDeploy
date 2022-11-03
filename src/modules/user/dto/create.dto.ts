@@ -8,7 +8,7 @@ export default class CreateUserDTO {
   })
   @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
   @ApiProperty({
     nullable: true,

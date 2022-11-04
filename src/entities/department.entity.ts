@@ -27,8 +27,11 @@ export default class DepartmentEntity {
   department?: string;
 
   @ApiProperty()
-  @Column()
-  title: string;
+  @IsOptional()
+  @Column({
+    nullable: true,
+  })
+  title?: string;
 
   @ApiProperty()
   @IsOptional()

@@ -2,7 +2,6 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import PasswordResetTokenEntity from 'src/entities/password_reset_token.entity';
-import PendingInvitationsEntity from 'src/entities/pending_invitations.entity';
 import UserEntity from 'src/entities/user.entity';
 import VerificationCodeEntity from 'src/entities/verification_code.entity';
 import { UserIdExistsMiddleware } from 'src/modules/user/middlewares/userIdExists';
@@ -17,7 +16,6 @@ import UserService from './user.service';
       UserEntity,
       VerificationCodeEntity,
       PasswordResetTokenEntity,
-      PendingInvitationsEntity,
     ]),
   ],
   providers: [UserService, JwtService, MessagesService],
@@ -32,8 +30,7 @@ export default class UserModule {
         'users/get/id/:userId',
         'users/edit/:userId',
         'users/get/contacts/:userId',
-        'users/import-contacts/:userId',
-        'users/get/pending-invitations/:userId',
+        'users/save-contacts/:userId',
         'users/remove/contact/:userId/:contactId',
       );
 

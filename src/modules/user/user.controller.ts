@@ -9,18 +9,16 @@ import {
   Patch,
   Post,
   Put,
-  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import PendingInvitationsEntity from 'src/entities/pending_invitations.entity';
 import UserEntity from 'src/entities/user.entity';
 import JWTGuard from '../auth/guards/jwt.guard';
 import ChangePasswordDTO from './dto/change-password.dto';
 import CreateUserDTO from './dto/create.dto';
 import EditUserDTO from './dto/edit.dto';
-import ImportContactsDTO from './dto/import-contacts.dto';
+import SaveContactsDTO from './dto/save-contacts.dto';
 import UserHasEmailOrPhoneDTO from './dto/user-has-email-or-phone.dto';
 import ValidateCodeDTO from './dto/validate-code.dto';
 import ValidatePasswordResetTokenDTO from './dto/validate-password-reset-token.dto';
@@ -179,40 +177,20 @@ export default class UserController {
   })
   async getUserContacts(
     @Param('userId') userId: number,
-  ): Promise<(UserEntity | PendingInvitationsEntity)[]> {
+  ): Promise<(UserEntity)[]> {
     const contacts = await this.userService.getUserContacts(userId);
 
     return contacts;
   }
 
-  @Post('import-contacts/:userId')
+  @Post('save-contacts/:userId')
   @UseGuards(JWTGuard)
-  @ApiOperation({ summary: "Import user's contacts" })
-  async importUserContacts(
+  @ApiOperation({ summary: "Save user's contacts" })
+  async saveUserContacts(
     @Param('userId') userId: number,
-    @Body() contacts: ImportContactsDTO,
+    @Body() contacts: SaveContactsDTO,
   ): Promise<void> {
-    await this.userService.importUserContacts(userId, contacts);
-  }
-
-  @Get('validate-invitation-token')
-  @ApiOperation({ summary: 'Validate invitation token' })
-  @HttpCode(202)
-  async validateInvitationToken(@Query('token') token: string): Promise<void> {
-    await this.userService.validateInvitationToken(token);
-  }
-
-  @Get('/get/pending-invitations/:userId')
-  @UseGuards(JWTGuard)
-  @ApiOperation({
-    summary: 'Get all pending invitations associated with a user',
-  })
-  async getUserContactsPendingInvitations(
-    @Param('userId') userId: number,
-  ): Promise<PendingInvitationsEntity[]> {
-    const invitations = await this.userService.getPendingInvitations(userId);
-
-    return invitations;
+    await this.userService.saveUserContacts(userId, contacts);
   }
 
   @Delete('/remove/contact/:userId/:contactId')

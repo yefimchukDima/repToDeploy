@@ -1,8 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export default class SaveContactsDTO {
   @ApiProperty()
-  @IsArray()
-  contacts: string[];
+  @IsNotEmpty()
+  @IsString()
+  first_name: string;
+
+  @ApiProperty({
+    required: false,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  last_name?: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  phone: string;
+
+  @ApiProperty({
+    required: false,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  avatar?: string;
 }

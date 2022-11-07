@@ -6,6 +6,7 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseArrayPipe,
   Patch,
   Post,
   Put,
@@ -177,7 +178,7 @@ export default class UserController {
   })
   async getUserContacts(
     @Param('userId') userId: number,
-  ): Promise<(UserEntity)[]> {
+  ): Promise<UserEntity[]> {
     const contacts = await this.userService.getUserContacts(userId);
 
     return contacts;
@@ -188,7 +189,12 @@ export default class UserController {
   @ApiOperation({ summary: "Save user's contacts" })
   async saveUserContacts(
     @Param('userId') userId: number,
-    @Body() contacts: SaveContactsDTO,
+    @Body(
+      new ParseArrayPipe({
+        items: SaveContactsDTO,
+      }),
+    )
+    contacts: SaveContactsDTO[],
   ): Promise<void> {
     await this.userService.saveUserContacts(userId, contacts);
   }

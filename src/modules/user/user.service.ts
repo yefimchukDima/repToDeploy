@@ -325,7 +325,10 @@ export default class UserService {
     return user.contacts;
   }
 
-  async saveUserContacts(userId: number, data: SaveContactsDTO): Promise<void> {
+  async saveUserContacts(
+    userId: number,
+    data: SaveContactsDTO[],
+  ): Promise<void> {
     const user = await this.getOne({
       where: { id: userId },
       relations: {
@@ -334,17 +337,20 @@ export default class UserService {
     });
 
     await this.userRepo.manager.transaction(async (manager: EntityManager) => {
-      for (const contact of data.contacts) {
+      for (const { first_name, last_name, phone, avatar } of data) {
         /* 
           TODO: Download link first hit token validation on API, 
           then go to app store/google play (get app store/google play
           URL and make another request after validation)
         */
         const invitedUser = await this.getOneBy({
-          mobile_number: contact,
+          mobile_number: phone,
         });
 
-        if (invitedUser && user.contacts.filter((x) => x.id === invitedUser.id).length)
+        if (
+          invitedUser &&
+          user.contacts.filter((x) => x.id === invitedUser.id).length
+        )
           throw new ConflictException(
             'Invited user is already on contact list',
           );
@@ -363,12 +369,21 @@ export default class UserService {
           try {
             let newUser = new UserEntity();
 
-            newUser.mobile_number = contact;
+            newUser.mobile_number = phone;
             newUser.isRegistered = false;
+            newUser.base64_image = avatar;
+            newUser.first_name = first_name;
+            newUser.last_name = last_name;
 
-            newUser = await this.userRepo.save(newUser);
+            try {
+              newUser = await this.userRepo.save(newUser);
 
-            user.contacts = [...user.contacts, newUser];
+              user.contacts = [...user.contacts, newUser];
+            } catch (error) {
+              throw new InternalServerErrorException(
+                'There was an error during adding contact to list: ' + error,
+              );
+            }
 
             try {
               await manager.save(user);
@@ -383,17 +398,19 @@ export default class UserService {
             );
           }
 
-          try {
-            await this.messagingService.sendSMS({
-              message: `I want to send you a message on SoundGlide! 
-              Tap to download: <some link here>
-              `,
-              phone_number: contact,
-            });
-          } catch (error) {
-            throw new InternalServerErrorException(
-              'There was an error during contacts importing: ' + error,
-            );
+          if (process.env.NODE_ENV === 'production') {
+            try {
+              await this.messagingService.sendSMS({
+                message: `I want to send you a message on SoundGlide! 
+                Tap to download: <some link here>
+                `,
+                phone_number: phone,
+              });
+            } catch (error) {
+              throw new InternalServerErrorException(
+                'There was an error during contacts importing: ' + error,
+              );
+            }
           }
         }
       }

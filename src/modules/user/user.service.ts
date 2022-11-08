@@ -351,9 +351,7 @@ export default class UserService {
           invitedUser &&
           user.contacts.filter((x) => x.id === invitedUser.id).length
         )
-          throw new ConflictException(
-            'Invited user is already on contact list',
-          );
+          continue;
 
         if (invitedUser) {
           user.contacts = [...user.contacts, invitedUser];

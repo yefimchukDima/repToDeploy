@@ -184,6 +184,18 @@ export default class UserController {
     return contacts;
   }
 
+  @Post('invite-contacts/:userId')
+  @UseGuards(JWTGuard)
+  @ApiOperation({ summary: 'Add users to friends list' })
+  async inviteContacts(
+    @Param('userId') userId: number,
+    @Body() data: number[],
+  ): Promise<{ error: string }> {
+    const res = await this.userService.inviteContacts(userId, data);
+
+    return res;
+  }
+
   @Post('save-contacts/:userId')
   @UseGuards(JWTGuard)
   @ApiOperation({ summary: "Save user's contacts" })

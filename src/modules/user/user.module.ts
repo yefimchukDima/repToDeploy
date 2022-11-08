@@ -30,6 +30,7 @@ export default class UserModule {
         'users/get/id/:userId',
         'users/edit/:userId',
         'users/get/contacts/:userId',
+        'users/invite-contacts/:userId',
         'users/save-contacts/:userId',
         'users/remove/contact/:userId/:contactId',
       );

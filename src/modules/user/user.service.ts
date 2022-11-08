@@ -325,6 +325,51 @@ export default class UserService {
     return user.contacts;
   }
 
+  async inviteContacts(
+    userId: number,
+    contacts: number[],
+  ): Promise<{ error: string }> {
+    const user = await this.getOne({
+      where: {
+        id: userId,
+      },
+      relations: {
+        contacts: true,
+      },
+    });
+
+    const existing = [];
+    const notExisted = [];
+
+    for (const contact of contacts) {
+      const exists = await this.getOneBy({
+        id: contact,
+      });
+
+      if (!exists) {
+        notExisted.push(contact);
+      } else {
+        existing.push(contact);
+      }
+    }
+
+    try {
+      user.contacts = [...user.contacts, ...existing];
+
+      await this.userRepo.save(user);
+
+      if (notExisted.length) {
+        return {
+          error: `The following ID's don't exist: ${notExisted.toString()}`,
+        };
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'There was an error adding contact to user list: ' + error,
+      );
+    }
+  }
+
   async saveUserContacts(
     userId: number,
     data: SaveContactsDTO[],

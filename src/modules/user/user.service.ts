@@ -34,7 +34,6 @@ import PasswordResetTokenEntity from 'src/entities/password_reset_token.entity';
 import ChangePasswordDTO from './dto/change-password.dto';
 import UserHasEmailOrPhoneDTO from './dto/user-has-email-or-phone.dto';
 import SaveContactsDTO from './dto/save-contacts.dto';
-import MessagesService from '../messages/messages.service';
 
 const FIVE_MIN_TO_SECS = 300;
 
@@ -47,7 +46,6 @@ export default class UserService {
     private readonly verificationCodeRepo: Repository<VerificationCodeEntity>,
     @InjectRepository(PasswordResetTokenEntity)
     private readonly passwordResetTokenRepo: Repository<PasswordResetTokenEntity>,
-    private readonly messagingService: MessagesService,
   ) {}
 
   async getOneBy(filter: FindOptionsWhere<UserEntity>): Promise<UserEntity> {
@@ -439,21 +437,6 @@ export default class UserService {
             throw new InternalServerErrorException(
               CREATING_REGISTER_ERROR('user') + error,
             );
-          }
-
-          if (process.env.NODE_ENV === 'production') {
-            try {
-              await this.messagingService.sendSMS({
-                message: `I want to send you a message on SoundGlide! 
-                Tap to download: <some link here>
-                `,
-                phone_number: phone,
-              });
-            } catch (error) {
-              throw new InternalServerErrorException(
-                'There was an error during contacts importing: ' + error,
-              );
-            }
           }
         }
       }

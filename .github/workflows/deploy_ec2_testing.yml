@@ -93,7 +93,7 @@ jobs:
           host: ec2-44-210-129-179.compute-1.amazonaws.com
           username: ubuntu
           port: 22
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_TESTING }}
           script_stop: true
           envs: IMAGE_TAG
           script: |

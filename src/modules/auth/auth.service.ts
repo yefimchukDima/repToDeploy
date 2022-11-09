@@ -4,13 +4,17 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import UserEntity from 'src/entities/user.entity';
 import UserService from 'src/modules/user/user.service';
 
 @Injectable()
 export default class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async autheticateUser(login: string, password: string): Promise<UserEntity> {
     const user = await this.userService.getOne({
@@ -22,6 +26,22 @@ export default class AuthService {
     await this.verifyPassword(password, user.password);
 
     return user;
+  }
+
+  async getUserFromToken(token: string) {
+    const validToken = await this.jwtService.verifyAsync(token, {
+      secret: process.env.JWT_SECRET,
+    });
+
+    if (validToken) {
+      const user = await this.userService.getOneBy({
+        id: validToken.id,
+      });
+
+      return user;
+    }
+
+    throw new NotFoundException('User not found');
   }
 
   private async verifyPassword(

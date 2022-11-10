@@ -181,6 +181,8 @@ export default class UserController {
   ): Promise<UserEntity[]> {
     const contacts = await this.userService.getUserContacts(userId);
 
+    console.log(contacts);
+
     return contacts;
   }
 
@@ -208,6 +210,8 @@ export default class UserController {
     )
     contacts: SaveContactsDTO[],
   ): Promise<void> {
+    console.log(contacts);
+
     await this.userService.saveUserContacts(userId, contacts);
   }
 

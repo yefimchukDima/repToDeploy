@@ -7,7 +7,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import WalkieTalkieService from './walkie-talkie.service';
+import ChatService from './chat.service';
 import * as bcrypt from 'bcrypt';
 
 export type User = {
@@ -20,11 +20,14 @@ export type SocketProps = {
   users?: User[];
 };
 
-enum EVENTS {
-  TALK = 'talk',
-}
+const NAMESPACE = 'chat';
 
-const NAMESPACE = 'walkie-talkie';
+enum EVENTS {
+  SEND_MESSAGE = 'send_message',
+  SEND_ALL_MESSAGES = 'send_all_messages',
+  GET_MESSAGE = 'get_message',
+  REQUEST_ALL_MESSAGES = 'request_all_messages',
+}
 
 @WebSocketGateway({
   cors: {
@@ -34,20 +37,20 @@ const NAMESPACE = 'walkie-talkie';
   },
   namespace: NAMESPACE,
 })
-export default class WalkieTalkieGateway implements OnGatewayConnection {
-  constructor(private readonly walkieTalkieService: WalkieTalkieService) {}
+export default class ChatGateway implements OnGatewayConnection {
+  constructor(private readonly chatService: ChatService) {}
 
   @WebSocketServer()
   server: Server;
 
   connectedSocketsMapping: SocketProps[] = [];
 
-  async handleConnection(socket: Socket) {
+  async handleConnection(socket: Socket): Promise<void> {
     const token = socket.handshake.headers.authorization;
     const toUser = socket.handshake.query.userId;
 
     if (token) {
-      const user = await this.walkieTalkieService.validateUserFromToken(token);
+      const user = await this.chatService.validateUserFromToken(token);
 
       // If user ID is equal to target user, disconnect
       if (user.id === +toUser) {
@@ -133,15 +136,40 @@ export default class WalkieTalkieGateway implements OnGatewayConnection {
     }
   }
 
-  @SubscribeMessage(EVENTS.TALK)
-  async privateWalkieTalkie(
-    @MessageBody() data: string,
+  @SubscribeMessage(EVENTS.SEND_MESSAGE)
+  async sendPrivateMessage(
+    @MessageBody() content: string,
     @ConnectedSocket() socket: Socket,
-  ) {
+  ): Promise<void> {
     const room = this.connectedSocketsMapping.find((x) =>
       x.users.find((y) => y.socketId === socket.id),
     );
 
-    if (room) this.server.to(room.room).emit(EVENTS.TALK, data);
+    if (room) {
+      const token = socket.handshake.headers.authorization;
+      const author = await this.chatService.validateUserFromToken(token);
+      const message = await this.chatService.saveMessage(
+        content,
+        author,
+        room.room,
+      );
+
+      delete message.author.password;
+
+      this.server.to(room.room).emit(EVENTS.GET_MESSAGE, message);
+    }
+  }
+
+  @SubscribeMessage(EVENTS.REQUEST_ALL_MESSAGES)
+  async requestAllMessages(@ConnectedSocket() socket: Socket): Promise<void> {
+    const room = this.connectedSocketsMapping.find((x) =>
+      x.users.find((y) => y.socketId === socket.id),
+    );
+
+    if (room && room.users.find((x) => x.socketId === socket.id)) {
+      const messages = await this.chatService.getAllMessagesByRoom(room.room);
+
+      this.server.to(room.room).emit(EVENTS.SEND_ALL_MESSAGES, messages);
+    }
   }
 }

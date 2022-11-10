@@ -11,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import ChatMessageEntity from './chat_message.entity';
 import CompanyEntity from './company.entity';
 import DepartmentEntity from './department.entity';
 import PasswordResetTokenEntity from './password_reset_token.entity';
@@ -103,6 +104,10 @@ export default class UserEntity {
   @ApiProperty({ type: () => [CompanyEntity] })
   @OneToMany(() => CompanyEntity, (c) => c.user)
   companies: CompanyEntity[];
+
+  @ApiProperty({ type: () => [ChatMessageEntity] })
+  @OneToMany(() => ChatMessageEntity, (c) => c.author)
+  chatMessages: ChatMessageEntity[];
 
   @ApiProperty({ type: () => [DepartmentEntity] })
   @OneToMany(() => DepartmentEntity, (d) => d.user)

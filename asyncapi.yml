@@ -1,0 +1,44 @@
+asyncapi: 2.5.0
+info:
+  title: Soundglide Back-end
+  version: "1.0.0"
+  description: |
+    Soundglide back-end websockets documentation
+servers:
+  dev:
+    description: Development server
+    protocol: ws
+    url: ws://ec2-54-87-49-175.compute-1.amazonaws.com:3000
+  test:
+    description: Testing server
+    protocol: ws
+    url: ws://ec2-44-210-129-179.compute-1.amazonaws.com:3000
+
+channels:
+  walkie-talkie:
+    subscribe:
+      operationId: "talk"
+      message:
+        payload:
+          type: string
+    publish:
+      operationId: "listen"
+  chat/send_message:
+    subscribe:
+      operationId: "send_message"
+      message:
+        payload:
+          type: string
+  chat/request_all_messages:
+    subscribe:
+      operationId: "request_all_messages"
+  chat/get_message:
+    publish:
+      message:
+        payload:
+          type: object
+  chat/send_all_messages:
+    publish:
+      message:
+        payload:
+          type: array

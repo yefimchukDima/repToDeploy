@@ -50,6 +50,9 @@ export default class ChatService {
           username: true,
         },
       },
+      order: {
+        date: 'DESC',
+      },
     });
 
     return messages;

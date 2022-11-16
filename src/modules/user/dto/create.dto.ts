@@ -30,6 +30,9 @@ export default class CreateUserDTO {
   })
   @IsOptional()
   @IsString()
+  @Matches(/^[0-9]*$/g, {
+    message: 'Only numbers is allowed!',
+  })
   mobile_number?: string;
 
   @ApiProperty()

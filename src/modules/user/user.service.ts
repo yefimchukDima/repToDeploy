@@ -92,11 +92,17 @@ export default class UserService {
         'The password must have 8 elements, at least one number, lower character and upper character',
       );
 
+    if (data.mobile_number.match(/^[0-9]*$/g)) {
+      instance.mobile_number = data.mobile_number;
+    } else
+      throw new BadRequestException(
+        'The mobile number must contain only numbers!',
+      );
+
     instance.email = data.email;
     instance.username = data.username;
     instance.first_name = data.first_name;
     instance.last_name = data.last_name;
-    instance.mobile_number = data.mobile_number;
     instance.base64_image = data.base64_image;
     instance.isRegistered = true;
 
@@ -129,12 +135,18 @@ export default class UserService {
         'The password must have 8 elements, at least one number, lower character and upper character',
       );
 
+    if (data.mobile_number.match(/^[0-9]*$/g)) {
+      instance.mobile_number = data.mobile_number;
+    } else
+      throw new BadRequestException(
+        'The mobile number must contain only numbers!',
+      );
+
     instance.isAdmin = true;
     instance.email = data.email;
     instance.username = data.username;
     instance.first_name = data.first_name;
     instance.last_name = data.last_name;
-    instance.mobile_number = data.mobile_number;
     instance.base64_image = data.base64_image;
 
     try {
@@ -155,7 +167,6 @@ export default class UserService {
     user.first_name = data.first_name;
     user.isAdmin = data.isAdmin;
     user.last_name = data.last_name;
-    user.mobile_number = data.mobile_number;
     user.username = data.username;
     user.base64_image = data.base64_image;
 
@@ -169,6 +180,13 @@ export default class UserService {
     else
       throw new BadRequestException(
         'The password must have 8 elements, at least one number, lower character and upper character',
+      );
+
+    if (data.mobile_number.match(/^[0-9]*$/g)) {
+      user.mobile_number = data.mobile_number;
+    } else
+      throw new BadRequestException(
+        'The mobile number must contain only numbers!',
       );
 
     try {

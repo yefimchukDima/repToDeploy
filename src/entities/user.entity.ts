@@ -81,6 +81,12 @@ export default class UserEntity {
 
   @ApiProperty()
   @Column({
+    default: false,
+  })
+  isVerified: boolean;
+
+  @ApiProperty()
+  @Column({
     nullable: true,
   })
   base64_image?: string;

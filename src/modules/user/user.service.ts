@@ -271,6 +271,10 @@ export default class UserService {
     try {
       await this.verificationCodeRepo.remove(verificationCode);
 
+      user.isVerified = true;
+
+      await this.userRepo.save(user);
+
       return user;
     } catch (e) {
       throw new InternalServerErrorException(e);

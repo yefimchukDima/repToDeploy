@@ -9,6 +9,7 @@ import AuthModule from './modules/auth/auth.module';
 import ChatModule from './modules/chat/chat.module';
 import CompanyModule from './modules/company/company.module';
 import DepartmentModule from './modules/department/department.module';
+import FilesModule from './modules/files/files.module';
 import MessagesModule from './modules/messages/messages.module';
 import UserModule from './modules/user/user.module';
 import WalkieTalkieModule from './modules/walkie-talkie/walkie-talkie.module';
@@ -32,6 +33,7 @@ import WalkieTalkieModule from './modules/walkie-talkie/walkie-talkie.module';
     MessagesModule,
     WalkieTalkieModule,
     ChatModule,
+    FilesModule,
   ],
 })
 export class AppModule implements NestModule {

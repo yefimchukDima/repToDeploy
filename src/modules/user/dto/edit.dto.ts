@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsOptional, IsString, Matches } from 'class-validator';
 
 export default class EditUserDTO {
   @ApiProperty({
@@ -33,6 +33,10 @@ export default class EditUserDTO {
   })
   @IsString()
   @IsOptional()
+  @Matches(/^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g, {
+    message:
+      'The password must have 8 elements, at least one number, lower character and upper character',
+  })
   password?: string;
 
   @ApiProperty({

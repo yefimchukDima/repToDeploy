@@ -81,12 +81,22 @@ export default class UserService {
 
     const instance = new UserEntity();
 
+    if (
+      data.password.match(
+        /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g,
+      )
+    )
+      instance.password = await createPassword(data.password);
+    else
+      throw new BadRequestException(
+        'The password must have 8 elements, at least one number, lower character and upper character',
+      );
+
     instance.email = data.email;
     instance.username = data.username;
     instance.first_name = data.first_name;
     instance.last_name = data.last_name;
     instance.mobile_number = data.mobile_number;
-    instance.password = await createPassword(data.password);
     instance.base64_image = data.base64_image;
     instance.isRegistered = true;
 
@@ -108,13 +118,23 @@ export default class UserService {
 
     const instance = new UserEntity();
 
+    if (
+      data.password.match(
+        /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g,
+      )
+    )
+      instance.password = await createPassword(data.password);
+    else
+      throw new BadRequestException(
+        'The password must have 8 elements, at least one number, lower character and upper character',
+      );
+
     instance.isAdmin = true;
     instance.email = data.email;
     instance.username = data.username;
     instance.first_name = data.first_name;
     instance.last_name = data.last_name;
     instance.mobile_number = data.mobile_number;
-    instance.password = await createPassword(data.password);
     instance.base64_image = data.base64_image;
 
     try {
@@ -139,7 +159,17 @@ export default class UserService {
     user.username = data.username;
     user.base64_image = data.base64_image;
 
-    if (data.password) user.password = await createPassword(data.password);
+    if (
+      data.password.match(
+        /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g,
+      ) &&
+      user.password
+    )
+      user.password = await createPassword(data.password);
+    else
+      throw new BadRequestException(
+        'The password must have 8 elements, at least one number, lower character and upper character',
+      );
 
     try {
       return await this.userRepo.save(user);

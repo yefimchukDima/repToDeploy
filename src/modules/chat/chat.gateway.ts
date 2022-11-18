@@ -144,8 +144,11 @@ export default class ChatGateway implements OnGatewayConnection {
     const room = this.connectedSocketsMapping.find((x) =>
       x.users.find((y) => y.socketId === socket.id),
     );
+    const toUser = this.connectedSocketsMapping
+      .find((x) => x.users.find((y) => y.socketId === socket.id))
+      .users.find((x) => x.socketId !== socket.id);
 
-    if (room) {
+    if (room && toUser) {
       const token = socket.handshake.headers.authorization;
       const author = await this.chatService.validateUserFromToken(token);
       const message = await this.chatService.saveMessage(
@@ -156,7 +159,7 @@ export default class ChatGateway implements OnGatewayConnection {
 
       delete message.author.password;
 
-      this.server.to(room.room).emit(EVENTS.GET_MESSAGE, message);
+      this.server.to(toUser.socketId).emit(EVENTS.GET_MESSAGE, message);
     }
   }
 

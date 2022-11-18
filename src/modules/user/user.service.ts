@@ -82,6 +82,7 @@ export default class UserService {
     const instance = new UserEntity();
 
     if (
+      data.password &&
       data.password.match(
         /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g,
       )
@@ -92,7 +93,7 @@ export default class UserService {
         'The password must have 8 elements, at least one number, lower character and upper character',
       );
 
-    if (data.mobile_number.match(/^[0-9]*$/g)) {
+    if (data.mobile_number && data.mobile_number.match(/^[0-9]*$/g)) {
       instance.mobile_number = data.mobile_number;
     } else
       throw new BadRequestException(
@@ -125,6 +126,7 @@ export default class UserService {
     const instance = new UserEntity();
 
     if (
+      data.password &&
       data.password.match(
         /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g,
       )
@@ -135,7 +137,7 @@ export default class UserService {
         'The password must have 8 elements, at least one number, lower character and upper character',
       );
 
-    if (data.mobile_number.match(/^[0-9]*$/g)) {
+    if (data.mobile_number && data.mobile_number.match(/^[0-9]*$/g)) {
       instance.mobile_number = data.mobile_number;
     } else
       throw new BadRequestException(
@@ -171,6 +173,7 @@ export default class UserService {
     user.base64_image = data.base64_image;
 
     if (
+      data.password &&
       data.password.match(
         /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g,
       ) &&
@@ -182,7 +185,7 @@ export default class UserService {
         'The password must have 8 elements, at least one number, lower character and upper character',
       );
 
-    if (data.mobile_number.match(/^[0-9]*$/g)) {
+    if (data.mobile_number && data.mobile_number.match(/^[0-9]*$/g)) {
       user.mobile_number = data.mobile_number;
     } else
       throw new BadRequestException(

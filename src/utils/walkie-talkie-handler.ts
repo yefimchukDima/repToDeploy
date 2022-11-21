@@ -61,7 +61,8 @@ function _generateWAVHeader(
  * @public
  */
 export function PCMtoWAV(base64: string) {
-  const options = { sampleRate: 44100, channels: 2 };
+  // Sample rate is the original sample rate / channels count
+  const options = { sampleRate: 22050, channels: 2 };
   const _buffer = Buffer.from(base64, 'base64');
   const _header = _generateWAVHeader(
     options.sampleRate,

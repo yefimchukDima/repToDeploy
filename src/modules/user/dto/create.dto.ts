@@ -5,6 +5,7 @@ import {
   IsString,
   Matches,
   MinLength,
+  ValidateBy,
 } from 'class-validator';
 
 export default class CreateUserDTO {
@@ -30,17 +31,41 @@ export default class CreateUserDTO {
   })
   @IsOptional()
   @IsString()
-  @Matches(/\d/g, {
-    message: 'Only numbers is allowed!',
+  @Matches(/[0-9]*/g, {
+    message: 'Mobile number must have only numbers!',
   })
   mobile_number?: string;
 
   @ApiProperty()
   @IsString()
   @MinLength(6)
-  @Matches(/^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g, {
-    message:
-      'The password must have 8 elements, at least one number, lower character and upper character',
+  @ValidateBy({
+    name: 'password_strength',
+    validator: {
+      validate: (value: string) => {
+        if (!value.length || value.length < 6 || value.length > 50)
+          return false;
+        if (!value.match(/([!,%,&,@,#,$,^,*,?,_,~])/g)) return false;
+        if (!value.match(/[a-z]/g)) return false;
+        if (!value.match(/[A-Z]/g)) return false;
+        if (!value.match(/[0-9]/g)) return false;
+
+        return true;
+      },
+      defaultMessage: ({ value }) => {
+        if (value.length < 6) return 'The password is too short!';
+        if (value.length > 50) return 'The password is too long!';
+        if (!value.match(/([!,%,&,@,#,$,^,*,?,_,~])/g))
+          return 'The password must have a special character!';
+        if (!value.match(/[a-z]/g))
+          return 'The password must have a lower case letter!';
+        if (!value.match(/[A-Z]/g))
+          return 'The password must have an upper case letter!';
+        if (!value.match(/[0-9]/g)) return 'The password must have a number!';
+
+        return 'Invalid password!';
+      },
+    },
   })
   password: string;
 

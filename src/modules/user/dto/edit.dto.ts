@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsOptional, IsString, Matches } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsOptional,
+  IsString,
+  Matches,
+  ValidateBy,
+} from 'class-validator';
 
 export default class EditUserDTO {
   @ApiProperty({
@@ -25,8 +32,8 @@ export default class EditUserDTO {
   })
   @IsOptional()
   @IsString()
-  @Matches(/^[0-9]*$/g, {
-    message: 'Only numbers is allowed!',
+  @Matches(/[^0-9]/g, {
+    message: 'Mobile number must have only numbers!',
   })
   mobile_number?: string;
 
@@ -36,9 +43,33 @@ export default class EditUserDTO {
   })
   @IsString()
   @IsOptional()
-  @Matches(/^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g, {
-    message:
-      'The password must have 8 elements, at least one number, lower character and upper character',
+  @ValidateBy({
+    name: 'password_strength',
+    validator: {
+      validate: (value: string) => {
+        if (!value.length || value.length < 6 || value.length > 50)
+          return false;
+        if (!value.match(/([!,%,&,@,#,$,^,*,?,_,~])/g)) return false;
+        if (!value.match(/[a-z]/g)) return false;
+        if (!value.match(/[A-Z]/g)) return false;
+        if (!value.match(/[0-9]/g)) return false;
+
+        return true;
+      },
+      defaultMessage: ({ value }) => {
+        if (value.length < 6) return 'Too short!';
+        if (value.length > 50) return 'Too long!';
+        if (!value.match(/([!,%,&,@,#,$,^,*,?,_,~])/g))
+          return 'The password must have a special character!';
+        if (!value.match(/[a-z]/g))
+          return 'The password must have a lower case letter!';
+        if (!value.match(/[A-Z]/g))
+          return 'The password must have an upper case letter!';
+        if (!value.match(/[0-9]/g)) return 'The password must have a number!';
+
+        return 'Invalid password!';
+      },
+    },
   })
   password?: string;
 
@@ -65,7 +96,7 @@ export default class EditUserDTO {
 
   @ApiProperty({
     nullable: true,
-    required: false
+    required: false,
   })
   @IsString()
   @IsOptional()

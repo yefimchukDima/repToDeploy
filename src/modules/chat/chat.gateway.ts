@@ -144,9 +144,7 @@ export default class ChatGateway implements OnGatewayConnection {
     const room = this.connectedSocketsMapping.find((x) =>
       x.users.find((y) => y.socketId === socket.id),
     );
-    const toUser = this.connectedSocketsMapping
-      .find((x) => x.users.find((y) => y.socketId === socket.id))
-      .users.find((x) => x.socketId !== socket.id);
+    const toUser = room.users.find((x) => x.socketId !== socket.id);
 
     if (room && toUser) {
       const token = socket.handshake.headers.authorization;

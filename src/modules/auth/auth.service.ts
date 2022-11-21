@@ -22,10 +22,10 @@ export default class AuthService {
       where: [{ email: login }, { mobile_number: login }],
     });
 
+    if (!user) throw new NotFoundException('User not found');
+
     if (!user.isVerified)
       throw new BadRequestException('You need to verify you account first!');
-
-    if (!user) throw new NotFoundException('User not found');
 
     await this.verifyPassword(password, user.password);
 

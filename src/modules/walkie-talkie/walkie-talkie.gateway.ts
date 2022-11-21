@@ -139,12 +139,15 @@ export default class WalkieTalkieGateway implements OnGatewayConnection {
     @MessageBody() data: string,
     @ConnectedSocket() socket: Socket,
   ) {
+    const uri = PCMtoWAV(data);
+
     const room = this.connectedSocketsMapping.find((x) =>
       x.users.find((y) => y.socketId === socket.id),
     );
 
-    const uri = PCMtoWAV(data);
-
-    if (room) this.server.to(room.room).emit(EVENTS.TALK, uri);
+    const toUser = room.users.find((x) => x.socketId !== socket.id);
+    
+    if (room && room.users.find((x) => x.socketId === socket.id))
+      this.server.to(toUser.socketId).emit(EVENTS.TALK, uri);
   }
 }

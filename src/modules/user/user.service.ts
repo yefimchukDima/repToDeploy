@@ -80,31 +80,11 @@ export default class UserService {
     if (user) throw new ConflictException('User already exists!');
 
     const instance = new UserEntity();
+    
+    Object.keys(instance).forEach((key, _) => {
+      if (data[key]) instance[key] = data[key];
+    });
 
-    if (
-      data.password &&
-      data.password.match(
-        /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g,
-      )
-    )
-      instance.password = await createPassword(data.password);
-    else
-      throw new BadRequestException(
-        'The password must have 8 elements, at least one number, lower character and upper character',
-      );
-
-    if (data.mobile_number && data.mobile_number.match(/^[0-9]*$/g)) {
-      instance.mobile_number = data.mobile_number;
-    } else
-      throw new BadRequestException(
-        'The mobile number must contain only numbers!',
-      );
-
-    instance.email = data.email;
-    instance.username = data.username;
-    instance.first_name = data.first_name;
-    instance.last_name = data.last_name;
-    instance.base64_image = data.base64_image;
     instance.isRegistered = true;
 
     try {
@@ -125,31 +105,11 @@ export default class UserService {
 
     const instance = new UserEntity();
 
-    if (
-      data.password &&
-      data.password.match(
-        /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g,
-      )
-    )
-      instance.password = await createPassword(data.password);
-    else
-      throw new BadRequestException(
-        'The password must have 8 elements, at least one number, lower character and upper character',
-      );
-
-    if (data.mobile_number && data.mobile_number.match(/^[0-9]*$/g)) {
-      instance.mobile_number = data.mobile_number;
-    } else
-      throw new BadRequestException(
-        'The mobile number must contain only numbers!',
-      );
+    Object.keys(instance).forEach((key, _) => {
+      if (data[key]) instance[key] = data[key];
+    });
 
     instance.isAdmin = true;
-    instance.email = data.email;
-    instance.username = data.username;
-    instance.first_name = data.first_name;
-    instance.last_name = data.last_name;
-    instance.base64_image = data.base64_image;
 
     try {
       return await this.userRepo.save(instance);
@@ -169,28 +129,7 @@ export default class UserService {
       if (data[key]) user[key] = data[key];
     });
 
-    if (data.password) {
-      if (
-        data.password.match(
-          /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g,
-        ) &&
-        user.password
-      )
-        user.password = await createPassword(data.password);
-      else
-        throw new BadRequestException(
-          'The password must have 8 elements, at least one number, lower character and upper character',
-        );
-    }
-
-    if (data.mobile_number) {
-      if (data.mobile_number.match(/^[0-9]*$/g)) {
-        user.mobile_number = data.mobile_number;
-      } else
-        throw new BadRequestException(
-          'The mobile number must contain only numbers!',
-        );
-    }
+    user.password = await createPassword(data.password);
 
     try {
       return await this.userRepo.save(user);

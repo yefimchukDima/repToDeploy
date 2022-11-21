@@ -165,32 +165,32 @@ export default class UserService {
       id: userId,
     });
 
-    user.email = data.email;
-    user.first_name = data.first_name;
-    user.isAdmin = data.isAdmin;
-    user.last_name = data.last_name;
-    user.username = data.username;
-    user.base64_image = data.base64_image;
+    Object.keys(user).forEach((key, _) => {
+      if (data[key]) user[key] = data[key];
+    });
 
-    if (
-      data.password &&
-      data.password.match(
-        /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g,
-      ) &&
-      user.password
-    )
-      user.password = await createPassword(data.password);
-    else
-      throw new BadRequestException(
-        'The password must have 8 elements, at least one number, lower character and upper character',
-      );
+    if (data.password) {
+      if (
+        data.password.match(
+          /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/g,
+        ) &&
+        user.password
+      )
+        user.password = await createPassword(data.password);
+      else
+        throw new BadRequestException(
+          'The password must have 8 elements, at least one number, lower character and upper character',
+        );
+    }
 
-    if (data.mobile_number && data.mobile_number.match(/^[0-9]*$/g)) {
-      user.mobile_number = data.mobile_number;
-    } else
-      throw new BadRequestException(
-        'The mobile number must contain only numbers!',
-      );
+    if (data.mobile_number) {
+      if (data.mobile_number.match(/^[0-9]*$/g)) {
+        user.mobile_number = data.mobile_number;
+      } else
+        throw new BadRequestException(
+          'The mobile number must contain only numbers!',
+        );
+    }
 
     try {
       return await this.userRepo.save(user);
@@ -207,6 +207,7 @@ export default class UserService {
     const user = await this.getOneBy({
       mobile_number,
     });
+
     const verificationCode = await this.verificationCodeRepo.findOneBy({
       user: {
         id: user.id,
@@ -435,7 +436,7 @@ export default class UserService {
     });
 
     await this.userRepo.manager.transaction(async (manager: EntityManager) => {
-      for (const { first_name, last_name, phone, avatar } of data) {
+      for (const { phone, avatar } of data) {
         /* 
           TODO: Download link first hit token validation on API, 
           then go to app store/google play (get app store/google play
@@ -465,11 +466,13 @@ export default class UserService {
           try {
             let newUser = new UserEntity();
 
-            newUser.mobile_number = phone;
+            Object.keys(newUser).forEach((key, _) => {
+              if (data[key]) newUser[key] = data[key];
+            });
+
             newUser.isRegistered = false;
             newUser.base64_image = avatar;
-            newUser.first_name = first_name;
-            newUser.last_name = last_name;
+            newUser.mobile_number = phone;
 
             try {
               newUser = await this.userRepo.save(newUser);
@@ -510,6 +513,7 @@ export default class UserService {
         contacts: true,
       },
     });
+
     const contact = await this.getOneBy({
       id: contactId,
     });

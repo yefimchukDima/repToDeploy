@@ -9,6 +9,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import WalkieTalkieService from './walkie-talkie.service';
 import * as bcrypt from 'bcrypt';
+import { PCMtoWAV } from 'src/utils/walkie-talkie-handler';
 
 export type User = {
   id: string;
@@ -142,6 +143,8 @@ export default class WalkieTalkieGateway implements OnGatewayConnection {
       x.users.find((y) => y.socketId === socket.id),
     );
 
-    if (room) this.server.to(room.room).emit(EVENTS.TALK, data);
+    const uri = PCMtoWAV(data);
+
+    if (room) this.server.to(room.room).emit(EVENTS.TALK, uri);
   }
 }

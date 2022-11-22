@@ -49,7 +49,16 @@ export default class WalkieTalkieGateway implements OnGatewayConnection {
         throw new WsException('A user cannot speak to itself!');
       }
 
-      this.connectedUsers.push({ id: String(user.id), socketId: socket.id });
+      const alreadyConnected = this.connectedUsers.find(
+        (x) => +x.id === user.id,
+      );
+
+      if (alreadyConnected) {
+        alreadyConnected.socketId = socket.id;
+        this.connectedUsers.push(alreadyConnected);
+      } else {
+        this.connectedUsers.push({ id: String(user.id), socketId: socket.id });
+      }
 
       socket.on('disconnect', () => {
         const connectedSocketIdx = this.connectedUsers.findIndex(

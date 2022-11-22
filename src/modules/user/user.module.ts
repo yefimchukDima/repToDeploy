@@ -39,7 +39,6 @@ export default class UserModule {
       .apply(UserPhoneExistsMiddleware)
       .forRoutes(
         'users/get/phone/:phone',
-        'users/generate-verification-code/:phone',
         'users/user-has-email-or-password/:phone',
       );
   }

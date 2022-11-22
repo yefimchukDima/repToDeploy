@@ -48,7 +48,9 @@ export default class DepartmentEntity {
   @Column({
     nullable: true,
   })
-  @IsEmail()
+  @IsEmail(undefined, {
+    message: 'Invalid email!'
+  })
   @IsOptional()
   email?: string;
 

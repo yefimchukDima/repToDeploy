@@ -151,24 +151,26 @@ export default class UserService {
       mobile_number,
     });
 
-    const verificationCode = await this.verificationCodeRepo.findOneBy({
-      user: {
-        id: user.id,
-      },
-    });
+    if (user) {
+      const verificationCode = await this.verificationCodeRepo.findOneBy({
+        user: {
+          id: user.id,
+        },
+      });
 
-    if (verificationCode) {
-      /* 
-      Check if the 5 min expiration time passed, if so, delete it 
-      and proceed with creation of another code
-      */
-      const isExp = isVerificationCodeExpired(verificationCode);
+      if (verificationCode) {
+        /* 
+        Check if the 5 min expiration time passed, if so, delete it 
+        and proceed with creation of another code
+        */
+        const isExp = isVerificationCodeExpired(verificationCode);
 
-      if (!isExp) throw new ConflictException('Code already exists');
-      try {
-        await this.verificationCodeRepo.remove(verificationCode);
-      } catch (e) {
-        throw new InternalServerErrorException(e);
+        if (!isExp) throw new ConflictException('Code already exists');
+        try {
+          await this.verificationCodeRepo.remove(verificationCode);
+        } catch (e) {
+          throw new InternalServerErrorException(e);
+        }
       }
     }
 

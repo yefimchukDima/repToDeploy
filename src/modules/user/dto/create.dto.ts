@@ -14,7 +14,9 @@ export default class CreateUserDTO {
     required: false,
   })
   @IsOptional()
-  @IsEmail()
+  @IsEmail(undefined, {
+    message: 'Invalid email!'
+  })
   email?: string;
 
   @ApiProperty({
@@ -22,7 +24,9 @@ export default class CreateUserDTO {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({
+    message: 'Invalid username!',
+  })
   username?: string;
 
   @ApiProperty({
@@ -30,7 +34,9 @@ export default class CreateUserDTO {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsString({
+    message: 'Invalid phone number!',
+  })
   @Matches(/^\d+$/, {
     message: 'Mobile number must have only numbers!',
   })
@@ -38,7 +44,9 @@ export default class CreateUserDTO {
   mobile_number?: string;
 
   @ApiProperty()
-  @IsString()
+  @IsString({
+    message: 'Invalid password!',
+  })
   @MinLength(6)
   @ValidateBy({
     name: 'password_strength',
@@ -46,7 +54,7 @@ export default class CreateUserDTO {
       validate: (value: string) => {
         if (!value.length || value.length < 6 || value.length > 50)
           return false;
-        if (!value.match(/([!,%,&,@,#,$,^,*,?,_,~])/g)) return false;
+        if (!value.match(/[\!\@\#\$\%\^\&\*\)\(\+\=\.\<\>\{\}\[\]\:\;\'\"\|\~\`\_\-]/g)) return false;
         if (!value.match(/[a-z]/g)) return false;
         if (!value.match(/[A-Z]/g)) return false;
         if (!value.match(/[0-9]/g)) return false;
@@ -56,7 +64,7 @@ export default class CreateUserDTO {
       defaultMessage: ({ value }) => {
         if (value.length < 6) return 'The password is too short!';
         if (value.length > 50) return 'The password is too long!';
-        if (!value.match(/([!,%,&,@,#,$,^,*,?,_,~])/g))
+        if (!value.match(/[\!\@\#\$\%\^\&\*\)\(\+\=\.\<\>\{\}\[\]\:\;\'\"\|\~\`\_\-]/g))
           return 'The password must have a special character!';
         if (!value.match(/[a-z]/g))
           return 'The password must have a lower case letter!';
@@ -74,7 +82,9 @@ export default class CreateUserDTO {
     nullable: true,
     required: false,
   })
-  @IsString()
+  @IsString({
+    message: 'Invalid first name!',
+  })
   @IsOptional()
   first_name?: string;
 
@@ -82,7 +92,9 @@ export default class CreateUserDTO {
     nullable: true,
     required: false,
   })
-  @IsString()
+  @IsString({
+    message: 'Invalid last name!',
+  })
   @IsOptional()
   last_name?: string;
 
@@ -90,7 +102,9 @@ export default class CreateUserDTO {
     nullable: true,
     required: false,
   })
-  @IsString()
+  @IsString({
+    message: 'Invalid image!',
+  })
   @IsOptional()
   base64_image?: string;
 }

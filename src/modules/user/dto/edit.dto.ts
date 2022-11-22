@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsEmail,
+  IsNotEmpty,
   IsOptional,
   IsString,
   Matches,
@@ -15,7 +16,12 @@ export default class EditUserDTO {
     nullable: true,
     required: false,
   })
-  @IsEmail()
+  @IsEmail(undefined, {
+    message: 'Invalid email!',
+  })
+  @IsNotEmpty({
+    message: 'E-mail must not be empty!',
+  })
   @IsOptional()
   email?: string;
 
@@ -24,7 +30,12 @@ export default class EditUserDTO {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsNotEmpty({
+    message: 'Username must not be empty!',
+  })
+  @IsString({
+    message: 'Invalid username!',
+  })
   username?: string;
 
   @ApiProperty({
@@ -32,7 +43,12 @@ export default class EditUserDTO {
     required: false,
   })
   @IsOptional()
-  @IsString()
+  @IsNotEmpty({
+    message: 'Mobile number must not be empty!',
+  })
+  @IsString({
+    message: 'Invalid phone number!',
+  })
   @Matches(/^\d+$/, {
     message: 'Mobile number must have only numbers!',
   })
@@ -43,7 +59,12 @@ export default class EditUserDTO {
     nullable: true,
     required: false,
   })
-  @IsString()
+  @IsNotEmpty({
+    message: 'Password must not be empty!',
+  })
+  @IsString({
+    message: 'Invalid password!',
+  })
   @IsOptional()
   @ValidateBy({
     name: 'password_strength',
@@ -51,7 +72,12 @@ export default class EditUserDTO {
       validate: (value: string) => {
         if (!value.length || value.length < 6 || value.length > 50)
           return false;
-        if (!value.match(/([!,%,&,@,#,$,^,*,?,_,~])/g)) return false;
+        if (
+          !value.match(
+            /[\!\@\#\$\%\^\&\*\)\(\+\=\.\<\>\{\}\[\]\:\;\'\"\|\~\`\_\-]/g,
+          )
+        )
+          return false;
         if (!value.match(/[a-z]/g)) return false;
         if (!value.match(/[A-Z]/g)) return false;
         if (!value.match(/[0-9]/g)) return false;
@@ -61,7 +87,11 @@ export default class EditUserDTO {
       defaultMessage: ({ value }) => {
         if (value.length < 6) return 'Too short!';
         if (value.length > 50) return 'Too long!';
-        if (!value.match(/([!,%,&,@,#,$,^,*,?,_,~])/g))
+        if (
+          !value.match(
+            /[\!\@\#\$\%\^\&\*\)\(\+\=\.\<\>\{\}\[\]\:\;\'\"\|\~\`\_\-]/g,
+          )
+        )
           return 'The password must have a special character!';
         if (!value.match(/[a-z]/g))
           return 'The password must have a lower case letter!';
@@ -79,7 +109,12 @@ export default class EditUserDTO {
     nullable: true,
     required: false,
   })
-  @IsString()
+  @IsNotEmpty({
+    message: 'First name must not be empty!',
+  })
+  @IsString({
+    message: 'Invalid first name!',
+  })
   @IsOptional()
   first_name?: string;
 
@@ -87,7 +122,12 @@ export default class EditUserDTO {
     nullable: true,
     required: false,
   })
-  @IsString()
+  @IsNotEmpty({
+    message: 'Last name not be empty!',
+  })
+  @IsString({
+    message: 'Invalid last name!',
+  })
   @IsOptional()
   last_name?: string;
 
@@ -100,7 +140,12 @@ export default class EditUserDTO {
     nullable: true,
     required: false,
   })
-  @IsString()
+  @IsNotEmpty({
+    message: 'Image must not be empty!',
+  })
+  @IsString({
+    message: 'Invalid image!',
+  })
   @IsOptional()
   base64_image?: string;
 }

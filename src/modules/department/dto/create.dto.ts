@@ -42,7 +42,9 @@ export default class CreateDepartmentDTO {
     required: false,
   })
   @IsOptional()
-  @IsEmail()
+  @IsEmail(undefined, {
+    message: 'Invalid email!'
+  })
   email?: string;
 
   @ApiProperty({

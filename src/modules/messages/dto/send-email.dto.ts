@@ -5,7 +5,9 @@ export default class SendEmailDTO {
   @ApiProperty({
     example: 'email@example.com',
   })
-  @IsEmail()
+  @IsEmail(undefined, {
+    message: 'Invalid email!'
+  })
   email: string;
 
   @ApiProperty()

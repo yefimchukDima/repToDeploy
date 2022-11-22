@@ -146,8 +146,7 @@ export default class WalkieTalkieGateway implements OnGatewayConnection {
     );
 
     const toUser = room.users.find((x) => x.socketId !== socket.id);
-    
-    if (room && room.users.find((x) => x.socketId === socket.id))
-      this.server.to(toUser.socketId).emit(EVENTS.TALK, uri);
+
+    if (room) this.server.to(toUser.socketId).emit(EVENTS.TALK, uri);
   }
 }

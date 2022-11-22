@@ -84,7 +84,6 @@ export default class UserController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({ summary: 'Edit an user' })
-  @UseGuards(JWTGuard)
   @ApiResponse({
     type: UserEntity,
   })

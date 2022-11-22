@@ -80,10 +80,12 @@ export default class UserService {
     if (user) throw new ConflictException('User already exists!');
 
     const instance = new UserEntity();
-    
-    Object.keys(instance).forEach((key, _) => {
+
+    Object.keys(instance).forEach((key) => {
       if (data[key]) instance[key] = data[key];
     });
+
+    if (data.password) instance.password = await createPassword(data.password);
 
     instance.isRegistered = true;
 
@@ -105,9 +107,11 @@ export default class UserService {
 
     const instance = new UserEntity();
 
-    Object.keys(instance).forEach((key, _) => {
+    Object.keys(instance).forEach((key) => {
       if (data[key]) instance[key] = data[key];
     });
+
+    if (data.password) instance.password = await createPassword(data.password);
 
     instance.isAdmin = true;
 
@@ -125,11 +129,11 @@ export default class UserService {
       id: userId,
     });
 
-    Object.keys(user).forEach((key, _) => {
+    Object.keys(user).forEach((key) => {
       if (data[key]) user[key] = data[key];
     });
 
-    user.password = await createPassword(data.password);
+    if (data.password) user.password = await createPassword(data.password);
 
     try {
       return await this.userRepo.save(user);
@@ -405,7 +409,7 @@ export default class UserService {
           try {
             let newUser = new UserEntity();
 
-            Object.keys(newUser).forEach((key, _) => {
+            Object.keys(newUser).forEach((key) => {
               if (data[key]) newUser[key] = data[key];
             });
 

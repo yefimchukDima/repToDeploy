@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -24,8 +23,9 @@ export default class AuthService {
 
     if (!user) throw new NotFoundException('User not found');
 
-    if (!user.isVerified)
-      throw new BadRequestException('You need to verify you account first!');
+    // TODO: Finish verification code screens and uncomment this lines below
+    // if (!user.isVerified)
+    //   throw new BadRequestException('You need to verify you account first!');
 
     await this.verifyPassword(password, user.password);
 

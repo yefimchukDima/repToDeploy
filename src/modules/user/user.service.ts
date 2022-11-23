@@ -81,12 +81,13 @@ export default class UserService {
 
     const instance = new UserEntity();
 
-    Object.keys(instance).forEach((key) => {
-      if (data[key]) instance[key] = data[key];
+    Object.keys(data).forEach((key) => {
+      instance[key] = data[key];
     });
 
     if (data.password) instance.password = await createPassword(data.password);
 
+    instance.first_name = data.mobile_number;
     instance.isRegistered = true;
 
     try {
@@ -107,8 +108,8 @@ export default class UserService {
 
     const instance = new UserEntity();
 
-    Object.keys(instance).forEach((key) => {
-      if (data[key]) instance[key] = data[key];
+    Object.keys(data).forEach((key) => {
+      instance[key] = data[key];
     });
 
     if (data.password) instance.password = await createPassword(data.password);

@@ -10,9 +10,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import UserEntity from 'src/entities/user.entity';
 import {
   EntityManager,
+  FindManyOptions,
   FindOneOptions,
   FindOptionsWhere,
   Repository,
+  SelectQueryBuilder,
 } from 'typeorm';
 import CreateUserDTO from './dto/create.dto';
 import {
@@ -34,6 +36,12 @@ import PasswordResetTokenEntity from 'src/entities/password_reset_token.entity';
 import ChangePasswordDTO from './dto/change-password.dto';
 import UserHasEmailOrPhoneDTO from './dto/user-has-email-or-phone.dto';
 import SaveContactsDTO from './dto/save-contacts.dto';
+import {
+  IPaginationMeta,
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 
 const FIVE_MIN_TO_SECS = 300;
 
@@ -70,6 +78,20 @@ export default class UserService {
         GETTING_REGISTER_ERROR('user') + error,
       );
     }
+  }
+
+  async paginateRepo(
+    options: IPaginationOptions,
+    where?: FindManyOptions<UserEntity>,
+  ): Promise<Pagination<UserEntity>> {
+    return paginate<UserEntity>(this.userRepo, options, where);
+  }
+
+  async paginateQB(
+    qb: SelectQueryBuilder<UserEntity>,
+    options: IPaginationOptions,
+  ): Promise<Pagination<UserEntity>> {
+    return paginate<UserEntity>(qb, options);
   }
 
   async createUser(data: CreateUserDTO): Promise<UserEntity> {
@@ -312,17 +334,18 @@ export default class UserService {
     };
   }
 
-  async getUserContacts(userId: number): Promise<UserEntity[]> {
-    const user = await this.getOne({
-      where: {
-        id: userId,
-      },
-      relations: {
-        contacts: true,
-      },
-    });
+  async getUserContacts(
+    userId: number,
+    paginationOptions: IPaginationOptions,
+  ): Promise<Pagination<UserEntity, IPaginationMeta>> {
+    const contacts = await this.userRepo
+      .createQueryBuilder('user')
+      .leftJoin('user.contacts', 'contact', 'user.id = :userId', { userId })
+      .orderBy('user.id');
 
-    return user.contacts;
+    const res = await this.paginateQB(contacts, paginationOptions);
+
+    return res;
   }
 
   async inviteContacts(

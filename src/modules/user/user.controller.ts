@@ -2,18 +2,23 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
   Param,
   ParseArrayPipe,
+  ParseIntPipe,
   Patch,
   Post,
   Put,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { IPaginationMeta, Pagination, PaginationTypeEnum } from 'nestjs-typeorm-paginate';
 import UserEntity from 'src/entities/user.entity';
 import JWTGuard from '../auth/guards/jwt.guard';
 import ChangePasswordDTO from './dto/change-password.dto';
@@ -28,7 +33,10 @@ import UserService from './user.service';
 
 @Controller('users')
 export default class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({ summary: 'Create an user' })
@@ -177,10 +185,17 @@ export default class UserController {
   })
   async getUserContacts(
     @Param('userId') userId: number,
-  ): Promise<UserEntity[]> {
-    const contacts = await this.userService.getUserContacts(userId);
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+  ): Promise<Pagination<UserEntity, IPaginationMeta>> {
+    limit = limit > 100 ? 100 : limit;
 
-    console.log(contacts);
+    const contacts = await this.userService.getUserContacts(userId, {
+      limit,
+      paginationType: PaginationTypeEnum.TAKE_AND_SKIP,
+      page,
+      route: `${this.configService.get('SERVER_URL')}/users/get/contacts/${userId}`,
+    });
 
     return contacts;
   }
@@ -209,8 +224,6 @@ export default class UserController {
     )
     contacts: SaveContactsDTO[],
   ): Promise<void> {
-    console.log(contacts);
-
     await this.userService.saveUserContacts(userId, contacts);
   }
 

@@ -18,6 +18,7 @@ export type User = {
 
 enum EVENTS {
   TALK = 'talk',
+  LISTEN = 'listen'
 }
 
 const NAMESPACE = 'walkie-talkie';
@@ -40,14 +41,9 @@ export default class WalkieTalkieGateway implements OnGatewayConnection {
 
   async handleConnection(socket: Socket) {
     const token = socket.handshake.headers.authorization;
-    const toUser = socket.handshake.query.userId;
 
     if (token) {
       const user = await this.walkieTalkieService.validateUserFromToken(token);
-
-      if (user.id === +toUser) {
-        throw new WsException('A user cannot speak to itself!');
-      }
 
       const alreadyConnected = this.connectedUsers.find(
         (x) => +x.id === user.id,
@@ -82,6 +78,6 @@ export default class WalkieTalkieGateway implements OnGatewayConnection {
 
     if (!toUser) throw new WsException('Target user is not connected!');
 
-    socket.to(toUser.socketId).emit(EVENTS.TALK, uri);
+    socket.to(toUser.socketId).emit(EVENTS.LISTEN, uri);
   }
 }

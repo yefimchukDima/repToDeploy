@@ -16,6 +16,11 @@ export type User = {
   socketId: string;
 };
 
+type RequestBody = {
+  targetId: number;
+  audio: string;
+}
+
 enum EVENTS {
   TALK = 'talk',
   LISTEN = 'listen'
@@ -68,13 +73,14 @@ export default class WalkieTalkieGateway implements OnGatewayConnection {
 
   @SubscribeMessage(EVENTS.TALK)
   async privateWalkieTalkie(
-    @MessageBody() data: string,
+    @MessageBody() data: RequestBody,
     @ConnectedSocket() socket: Socket,
   ) {
-    const targetUser = socket.handshake.query.userId;
-    const uri = PCMtoWAV(data);
+    if (!data.audio) throw new WsException('No audio string provided!');
+    if (!data.targetId) throw new WsException('No user id provided!');
 
-    const toUser = this.connectedUsers.find((x) => x.id === targetUser);
+    const uri = PCMtoWAV(data.audio);
+    const toUser = this.connectedUsers.find((x) => +x.id === data.targetId);
 
     if (!toUser) throw new WsException('Target user is not connected!');
 

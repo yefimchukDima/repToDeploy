@@ -1,5 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsUrl } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   Column,
   CreateDateColumn,
@@ -19,22 +18,19 @@ export default class DepartmentEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty()
-  @IsOptional()
+  @ApiPropertyOptional()
   @Column({
     nullable: true,
   })
   department?: string;
 
-  @ApiProperty()
-  @IsOptional()
+  @ApiPropertyOptional()
   @Column({
     nullable: true,
   })
   title?: string;
 
-  @ApiProperty()
-  @IsOptional()
+  @ApiPropertyOptional()
   @Column({
     nullable: true,
   })
@@ -44,22 +40,16 @@ export default class DepartmentEntity {
   @Column()
   phone_number: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Column({
     nullable: true,
   })
-  @IsEmail(undefined, {
-    message: 'Invalid email!'
-  })
-  @IsOptional()
   email?: string;
 
-  @ApiProperty()
-  @IsOptional()
+  @ApiPropertyOptional()
   @Column({
     nullable: true,
   })
-  @IsUrl()
   image_url?: string;
 
   @ApiProperty()

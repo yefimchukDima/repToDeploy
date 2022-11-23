@@ -61,14 +61,8 @@ export default class WalkieTalkieGateway implements OnGatewayConnection {
       }
 
       socket.on('disconnect', () => {
-        const connectedSocketIdx = this.connectedUsers.findIndex(
-          (x) => x.socketId === socket.id,
-        );
-
-        let connectedUser = this.connectedUsers[connectedSocketIdx];
-
         this.connectedUsers = this.connectedUsers.filter(
-          (x) => x.socketId !== connectedUser.socketId,
+          (x) => x.socketId !== socket.id,
         );
       });
     } else {

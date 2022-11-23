@@ -31,6 +31,8 @@ import ValidatePasswordResetTokenDTO from './dto/validate-password-reset-token.d
 import VerificationCodeDTO from './dto/verification-code.dto';
 import UserService from './user.service';
 
+const MAX_PAGE_LIMIT = 100;
+
 @Controller('users')
 export default class UserController {
   constructor(
@@ -188,7 +190,7 @@ export default class UserController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
   ): Promise<Pagination<UserEntity, IPaginationMeta>> {
-    limit = limit > 100 ? 100 : limit;
+    limit = limit > MAX_PAGE_LIMIT ? MAX_PAGE_LIMIT : limit;
 
     const contacts = await this.userService.getUserContacts(userId, {
       limit,

@@ -334,18 +334,71 @@ export default class UserService {
     };
   }
 
-  async getUserContacts(
+  async getUserContacts(userId: number): Promise<UserEntity[]> {
+    const user = await this.getOne({
+      where: {
+        id: userId,
+      },
+      relations: {
+        contacts: true,
+      },
+    });
+
+    return user.contacts;
+  }
+
+  async getUserContactsPagination(
     userId: number,
     paginationOptions: IPaginationOptions,
+    query?: string,
   ): Promise<Pagination<UserEntity, IPaginationMeta>> {
-    const contacts = await this.userRepo
-      .createQueryBuilder('user')
-      .leftJoin('user.contacts', 'contact', 'user.id = :userId', { userId })
-      .orderBy('user.id');
+    let contacts: SelectQueryBuilder<UserEntity>;
 
-    const res = await this.paginateQB(contacts, paginationOptions);
+    if (query) {
+      contacts = await this.userRepo
+        .createQueryBuilder('user')
+        .innerJoinAndSelect('user.contacts', 'contact', 'user.id = :userId', {
+          userId,
+        })
+        .where(
+          `
+          contact."first_name" = :query 
+          OR contact."last_name" = :query 
+          OR contact.username = :query
+          OR contact."mobile_number" = :query
+          OR contact.email = :query`,
+          { query },
+        )
+        .orderBy('user.id');
+    } else {
+      contacts = await this.userRepo
+        .createQueryBuilder('user')
+        .innerJoinAndSelect('user.contacts', 'contact', 'user.id = :userId', {
+          userId,
+        })
+        .orderBy('user.id');
+    }
 
-    return res;
+    try {
+      let res = await this.paginateQB(contacts, paginationOptions);
+
+      res = {
+        ...res,
+        items: res.items.flatMap((x) =>
+          x.contacts.flatMap((y) => {
+            delete y.password;
+
+            return y;
+          }),
+        ),
+      };
+
+      return res;
+    } catch (e) {
+      throw new InternalServerErrorException(
+        'There was an error on getting contacts by pagination: ' + e,
+      );
+    }
   }
 
   async inviteContacts(

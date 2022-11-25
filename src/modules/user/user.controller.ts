@@ -18,7 +18,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { IPaginationMeta, Pagination, PaginationTypeEnum } from 'nestjs-typeorm-paginate';
+import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
 import UserEntity from 'src/entities/user.entity';
 import JWTGuard from '../auth/guards/jwt.guard';
 import ChangePasswordDTO from './dto/change-password.dto';
@@ -187,17 +187,37 @@ export default class UserController {
   })
   async getUserContacts(
     @Param('userId') userId: number,
+  ): Promise<UserEntity[]> {
+    const contacts = await this.userService.getUserContacts(userId);
+
+    return contacts;
+  }
+
+  @Get('get/contacts/:userId/pagination')
+  @ApiOperation({ summary: "Get user's contacts via pagination" })
+  @ApiResponse({
+    type: [UserEntity],
+  })
+  async getUserContactsPagination(
+    @Param('userId') userId: number,
+    @Query('query') query?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
   ): Promise<Pagination<UserEntity, IPaginationMeta>> {
     limit = limit > MAX_PAGE_LIMIT ? MAX_PAGE_LIMIT : limit;
+    const serverUrl = this.configService.get('SERVER_URL');
 
-    const contacts = await this.userService.getUserContacts(userId, {
-      limit,
-      paginationType: PaginationTypeEnum.TAKE_AND_SKIP,
-      page,
-      route: `${this.configService.get('SERVER_URL')}/users/get/contacts/${userId}`,
-    });
+    const contacts = await this.userService.getUserContactsPagination(
+      userId,
+      {
+        limit,
+        page,
+        route: `${serverUrl}/users/get/contacts/${userId}/pagination${
+          query ? `?query=${query}` : ''
+        }`,
+      },
+      query,
+    );
 
     return contacts;
   }

@@ -33,6 +33,7 @@ export default class UserModule {
         'users/invite-contacts/:userId',
         'users/save-contacts/:userId',
         'users/remove/contact/:userId/:contactId',
+        'users/get/contacts/:userId/pagination'
       );
 
     consumer

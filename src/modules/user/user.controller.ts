@@ -2,18 +2,23 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
   Param,
   ParseArrayPipe,
+  ParseIntPipe,
   Patch,
   Post,
   Put,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { IPaginationMeta, Pagination } from 'nestjs-typeorm-paginate';
 import UserEntity from 'src/entities/user.entity';
 import JWTGuard from '../auth/guards/jwt.guard';
 import ChangePasswordDTO from './dto/change-password.dto';
@@ -26,9 +31,14 @@ import ValidatePasswordResetTokenDTO from './dto/validate-password-reset-token.d
 import VerificationCodeDTO from './dto/verification-code.dto';
 import UserService from './user.service';
 
+const MAX_PAGE_LIMIT = 100;
+
 @Controller('users')
 export default class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOperation({ summary: 'Create an user' })
@@ -180,7 +190,34 @@ export default class UserController {
   ): Promise<UserEntity[]> {
     const contacts = await this.userService.getUserContacts(userId);
 
-    console.log(contacts);
+    return contacts;
+  }
+
+  @Get('get/contacts/:userId/pagination')
+  @ApiOperation({ summary: "Get user's contacts via pagination" })
+  @ApiResponse({
+    type: [UserEntity],
+  })
+  async getUserContactsPagination(
+    @Param('userId') userId: number,
+    @Query('query') query?: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+  ): Promise<Pagination<UserEntity, IPaginationMeta>> {
+    limit = limit > MAX_PAGE_LIMIT ? MAX_PAGE_LIMIT : limit;
+    const serverUrl = this.configService.get('SERVER_URL');
+
+    const contacts = await this.userService.getUserContactsPagination(
+      userId,
+      {
+        limit,
+        page,
+        route: `${serverUrl}/users/get/contacts/${userId}/pagination${
+          query ? `?query=${query}` : ''
+        }`,
+      },
+      query,
+    );
 
     return contacts;
   }
@@ -209,8 +246,6 @@ export default class UserController {
     )
     contacts: SaveContactsDTO[],
   ): Promise<void> {
-    console.log(contacts);
-
     await this.userService.saveUserContacts(userId, contacts);
   }
 

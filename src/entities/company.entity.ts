@@ -28,6 +28,12 @@ export default class CompanyEntity {
   website_url: string;
 
   @ApiProperty()
+  @Column({
+    nullable: true,
+  })
+  url_id?: string;
+
+  @ApiProperty()
   @Column()
   name: string;
 

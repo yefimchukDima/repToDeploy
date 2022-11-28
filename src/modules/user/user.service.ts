@@ -488,7 +488,7 @@ export default class UserService {
           try {
             let newUser = new UserEntity();
 
-            Object.keys(newUser).forEach((key) => {
+            Object.keys(data).forEach((key) => {
               if (data[key]) newUser[key] = data[key];
             });
 

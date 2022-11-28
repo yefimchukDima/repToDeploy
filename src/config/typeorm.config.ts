@@ -20,6 +20,7 @@ export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
       synchronize: true,
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       migrations: [__dirname + '/../migrations/*{.ts,.js}'],
+      subscribers: [__dirname + '/../subscribers/*.subscriber{.ts,.js}'],
       autoLoadEntities: true,
       logging: false,
     };

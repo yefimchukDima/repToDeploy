@@ -3,6 +3,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -64,6 +66,9 @@ export default class DepartmentEntity {
   @ManyToOne(() => CompanyEntity, (c) => c.departments)
   company: CompanyEntity;
 
-  @ManyToOne(() => UserEntity, (u) => u.departments)
+  @JoinTable({
+    name: 'department_users',
+  })
+  @ManyToMany(() => UserEntity, (u) => u.departments)
   user: DepartmentEntity;
 }

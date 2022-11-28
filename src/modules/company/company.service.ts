@@ -11,7 +11,12 @@ import {
   CREATING_REGISTER_ERROR,
   EDITING_REGISTER_ERROR,
 } from 'src/utils/error-messages';
-import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
+import {
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  Repository,
+} from 'typeorm';
 import UserService from '../user/user.service';
 import CreateCompanyDTO from './dto/create.dto';
 import EditCompanyDTO from './dto/edit.dto';
@@ -25,6 +30,12 @@ export default class CompanyService {
     private readonly departmentRepo: Repository<DepartmentEntity>,
     private readonly userService: UserService,
   ) {}
+
+  async getOne(filter: FindOneOptions<CompanyEntity>): Promise<CompanyEntity> {
+    const company = await this.companyRepo.findOne(filter);
+
+    return company;
+  }
 
   async getOneBy(
     filter: FindOptionsWhere<CompanyEntity> | FindOptionsWhere<CompanyEntity>[],
@@ -64,7 +75,13 @@ export default class CompanyService {
     instance.user = user;
 
     try {
-      return await this.companyRepo.save(instance);
+      let created = await this.companyRepo.save(instance);
+
+      created = await this.getOneBy({
+        id: created.id,
+      });
+
+      return created;
     } catch (error) {
       throw new InternalServerErrorException(
         CREATING_REGISTER_ERROR('Company') + error,
@@ -104,6 +121,9 @@ export default class CompanyService {
         company: {
           id: company.id,
         },
+      },
+      relations: {
+        user: true,
       },
     });
 

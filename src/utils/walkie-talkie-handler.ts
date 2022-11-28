@@ -37,10 +37,10 @@ function _generateWAVHeader(
     p += 2;
   };
 
-  writeString('RIFF');
+  writeString("RIFF");
   writeUint32(_ds + 36);
-  writeString('WAVE');
-  writeString('fmt ');
+  writeString("WAVE");
+  writeString("fmt ");
   writeUint32(16);
   writeUint16(1);
   writeUint16(channelsCount);
@@ -48,7 +48,7 @@ function _generateWAVHeader(
   writeUint32(_br);
   writeUint16(_ba);
   writeUint16(bytesPerSample * 8);
-  writeString('data');
+  writeString("data");
   writeUint32(_ds);
 
   return buffer;
@@ -62,13 +62,13 @@ function _generateWAVHeader(
  */
 export function PCMtoWAV(base64: string) {
   // Sample rate is the original sample rate / channels count
-  const options = { sampleRate: 22050, channels: 2 };
+  const options = { sampleRate: 44100, channels: 1 };
   const _buffer = Buffer.from(base64, 'base64');
   const _header = _generateWAVHeader(
     options.sampleRate,
     options.channels,
-    _buffer.byteLength / Uint8Array.BYTES_PER_ELEMENT,
-    Uint8Array.BYTES_PER_ELEMENT * options.channels,
+    _buffer.byteLength / 2,
+    2
   );
 
   const wavHeader = new Uint8Array(_header);

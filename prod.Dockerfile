@@ -43,4 +43,4 @@ COPY --from=builder /usr/src/app/dist ./dist
 
 RUN ls ./dist -a
 
-CMD ["pm2-runtime", "dist/src/main"]
+CMD ["pm2-runtime", "dist/main"]

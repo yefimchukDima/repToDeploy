@@ -108,8 +108,14 @@ export default class UserService {
       instance[key] = data[key];
     });
 
-    if (data.mobile_number)
-      instance.mobile_number = normalizePhoneNumber(data.mobile_number);
+    if (data.mobile_number) {
+      if (/\d{6,}/.test(data.mobile_number)) {
+        instance.mobile_number = normalizePhoneNumber(data.mobile_number);
+      } else {
+        throw new BadRequestException('Invalid mobile number!');
+      }
+    }
+
     if (data.password) instance.password = await createPassword(data.password);
 
     instance.first_name = data.first_name || data.mobile_number;
@@ -137,8 +143,14 @@ export default class UserService {
       instance[key] = data[key];
     });
 
-    if (data.mobile_number)
-      instance.mobile_number = normalizePhoneNumber(data.mobile_number);
+    if (data.mobile_number) {
+      if (/\d{6,}/.test(data.mobile_number)) {
+        instance.mobile_number = normalizePhoneNumber(data.mobile_number);
+      } else {
+        throw new BadRequestException('Invalid mobile number!');
+      }
+    }
+
     if (data.password) instance.password = await createPassword(data.password);
 
     instance.isAdmin = true;
@@ -161,8 +173,13 @@ export default class UserService {
       if (data[key]) user[key] = data[key];
     });
 
-    if (data.mobile_number)
-      user.mobile_number = normalizePhoneNumber(data.mobile_number);
+    if (data.mobile_number) {
+      if (/\d{6,}/.test(data.mobile_number)) {
+        user.mobile_number = normalizePhoneNumber(data.mobile_number);
+      } else {
+        throw new BadRequestException('Invalid mobile number!');
+      }
+    }
     if (data.password) user.password = await createPassword(data.password);
 
     try {
@@ -174,11 +191,9 @@ export default class UserService {
     }
   }
 
-  async generateVerificationCode(
-    mobile_number: string,
-  ): Promise<{ code: string }> {
-    const user = await this.getOneBy({
-      mobile_number,
+  async generateVerificationCode(login: string): Promise<{ code: string }> {
+    const user = await this.getOne({
+      where: [{ mobile_number: login }, { email: login }],
     });
 
     if (user) {
@@ -225,8 +240,8 @@ export default class UserService {
 
   // Normal code verification
   async validateVerificationCode(data: ValidateCodeDTO): Promise<UserEntity> {
-    const user = await this.getOneBy({
-      mobile_number: data.mobile_number,
+    const user = await this.getOne({
+      where: [{ mobile_number: data.login }, { email: data.login }],
     });
 
     if (!user) throw new NotFoundException('User not found!');
@@ -264,8 +279,8 @@ export default class UserService {
   async validateVerificationCodePasswordReset(
     data: ValidateCodeDTO,
   ): Promise<{ passwordResetToken: string }> {
-    const user = await this.getOneBy({
-      mobile_number: data.mobile_number,
+    const user = await this.getOne({
+      where: [{ mobile_number: data.login }, { email: data.login }],
     });
 
     if (!user) throw new NotFoundException('User not found!');

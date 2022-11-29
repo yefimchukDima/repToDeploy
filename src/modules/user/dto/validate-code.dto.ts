@@ -4,7 +4,7 @@ import { IsString } from 'class-validator';
 export default class ValidateCodeDTO {
   @ApiProperty()
   @IsString()
-  mobile_number: string;
+  login: string;
 
   @ApiProperty()
   @IsString()

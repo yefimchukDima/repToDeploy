@@ -42,6 +42,7 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import { normalizePhoneNumber } from 'src/utils/regexes';
 
 const FIVE_MIN_TO_SECS = 300;
 
@@ -107,9 +108,11 @@ export default class UserService {
       instance[key] = data[key];
     });
 
+    if (data.mobile_number)
+      instance.mobile_number = normalizePhoneNumber(data.mobile_number);
     if (data.password) instance.password = await createPassword(data.password);
 
-    instance.first_name = data.mobile_number;
+    instance.first_name = data.first_name || data.mobile_number;
     instance.isRegistered = true;
 
     try {
@@ -134,6 +137,8 @@ export default class UserService {
       instance[key] = data[key];
     });
 
+    if (data.mobile_number)
+      instance.mobile_number = normalizePhoneNumber(data.mobile_number);
     if (data.password) instance.password = await createPassword(data.password);
 
     instance.isAdmin = true;
@@ -156,6 +161,8 @@ export default class UserService {
       if (data[key]) user[key] = data[key];
     });
 
+    if (data.mobile_number)
+      user.mobile_number = normalizePhoneNumber(data.mobile_number);
     if (data.password) user.password = await createPassword(data.password);
 
     try {
@@ -464,8 +471,9 @@ export default class UserService {
           then go to app store/google play (get app store/google play
           URL and make another request after validation)
         */
+        const mobile_number = normalizePhoneNumber(phone);
         const invitedUser = await this.getOneBy({
-          mobile_number: phone,
+          mobile_number,
         });
 
         if (
@@ -494,7 +502,7 @@ export default class UserService {
 
             newUser.isRegistered = false;
             newUser.base64_image = avatar;
-            newUser.mobile_number = phone;
+            newUser.mobile_number = mobile_number;
 
             try {
               newUser = await this.userRepo.save(newUser);

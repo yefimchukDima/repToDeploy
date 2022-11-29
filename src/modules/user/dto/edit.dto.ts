@@ -5,7 +5,6 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  Matches,
   MinLength,
   ValidateBy,
 } from 'class-validator';
@@ -48,9 +47,6 @@ export default class EditUserDTO {
   })
   @IsString({
     message: 'Invalid phone number!',
-  })
-  @Matches(/^\d+$/, {
-    message: 'Mobile number must have only numbers!',
   })
   @MinLength(6)
   mobile_number?: string;

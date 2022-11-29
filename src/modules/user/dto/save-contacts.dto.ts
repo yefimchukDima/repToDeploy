@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export default class SaveContactsDTO {
   @ApiProperty()
@@ -26,9 +26,6 @@ export default class SaveContactsDTO {
   @ApiProperty()
   @IsNotEmpty({
     message: 'Phone must not be empty!',
-  })
-  @Matches(/^\d+$/, {
-    message: 'Phone number must have only numbers!',
   })
   @IsString({
     message: 'Invalid phone!',

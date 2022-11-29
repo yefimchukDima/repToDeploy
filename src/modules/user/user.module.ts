@@ -7,6 +7,7 @@ import VerificationCodeEntity from 'src/entities/verification_code.entity';
 import { UserIdExistsMiddleware } from 'src/modules/user/middlewares/userIdExists';
 import { UserPhoneExistsMiddleware } from 'src/modules/user/middlewares/userPhoneExists';
 import MessagesService from '../messages/messages.service';
+import { UserEmailExistsMiddleware } from './middlewares/userEmailPhoneExists';
 import UserController from './user.controller';
 import UserService from './user.service';
 
@@ -33,13 +34,16 @@ export default class UserModule {
         'users/invite-contacts/:userId',
         'users/save-contacts/:userId',
         'users/remove/contact/:userId/:contactId',
-        'users/get/contacts/:userId/pagination'
+        'users/get/contacts/:userId/pagination',
       );
+
+    consumer
+      .apply(UserEmailExistsMiddleware)
+      .forRoutes('users/get/email-phone/:emailPhone');
 
     consumer
       .apply(UserPhoneExistsMiddleware)
       .forRoutes(
-        'users/get/phone/:phone',
         'users/user-has-email-or-password/:phone',
       );
   }

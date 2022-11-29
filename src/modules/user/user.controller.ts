@@ -79,14 +79,16 @@ export default class UserController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @ApiOperation({ summary: 'Get an user by phone number' })
+  @ApiOperation({ summary: 'Get an user by phone number or email' })
   @ApiResponse({
     type: UserEntity,
   })
-  @Get('/get/phone/:phone')
-  async getUserByPhone(@Param('phone') phone: string): Promise<UserEntity> {
-    const user = await this.userService.getOneBy({
-      mobile_number: phone,
+  @Get('/get/email-phone/:emailPhone')
+  async getUserByPhone(
+    @Param('emailPhone') emailPhone: string,
+  ): Promise<UserEntity> {
+    const user = await this.userService.getOne({
+      where: [{ email: emailPhone }, { mobile_number: emailPhone }],
     });
 
     return user;

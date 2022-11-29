@@ -37,8 +37,10 @@ COPY yarn.lock ./
 
 RUN /usr/local/bin/yarn install --frozen-lockfile
 
+RUN /usr/local/bin/yarn global add pm2
+
 COPY --from=builder /usr/src/app/dist ./dist
 
 EXPOSE 3000
 
-CMD ["node", "dist/main"]
+CMD ["pm2-runtime", "dist/main"]

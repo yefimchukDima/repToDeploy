@@ -43,4 +43,4 @@ COPY --from=builder /usr/src/app/dist ./dist
 
 EXPOSE 3000
 
-CMD ["pm2-runtime", "dist/main"]
+CMD ["pm2-runtime", "dist/src/main"]

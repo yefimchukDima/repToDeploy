@@ -45,4 +45,4 @@ EXPOSE 3000
 
 RUN ls
 
-CMD ["node", "dist/main"]
+CMD ["pm2", "dist/main"]

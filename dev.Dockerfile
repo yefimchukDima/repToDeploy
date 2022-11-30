@@ -45,4 +45,4 @@ EXPOSE 3000
 
 RUN ls
 
-CMD ["pm2", "start", "dist/main"]
+CMD ["pm2", "start", "./dist/main.js"]

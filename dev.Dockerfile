@@ -34,6 +34,7 @@ WORKDIR /usr/src/app
 
 COPY package.json ./
 COPY yarn.lock ./
+COPY pm2.json ./
 
 RUN /usr/local/bin/yarn install --frozen-lockfile
 
@@ -43,6 +44,4 @@ COPY --from=builder /usr/src/app/dist ./dist
 
 EXPOSE 3000
 
-RUN ls
-
-CMD ["pm2", "start", "./dist/main.js"]
+CMD ["pm2-runtime", "start", "pm2.json"]

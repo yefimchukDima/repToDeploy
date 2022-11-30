@@ -2,6 +2,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -33,35 +34,43 @@ export default class AuthService {
   }
 
   async getUserFromToken(token: string) {
-    const validToken = await this.jwtService.verifyAsync(token, {
-      secret: process.env.JWT_SECRET,
-    });
-
-    if (validToken) {
-      const user = await this.userService.getOneBy({
-        id: validToken.id,
+    try {
+      const validToken = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET,
       });
 
-      return user;
-    }
+      if (validToken) {
+        const user = await this.userService.getOneBy({
+          id: validToken.id,
+        });
 
-    throw new NotFoundException('User not found');
+        return user;
+      }
+
+      throw new NotFoundException('User not found');
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   private async verifyPassword(
     plainTextPassword: string,
     hashedPassword: string,
   ) {
-    const isPasswordMatching = await bcrypt.compare(
-      plainTextPassword,
-      hashedPassword,
-    );
-
-    if (!isPasswordMatching) {
-      throw new HttpException(
-        'Wrong credentials provided',
-        HttpStatus.BAD_REQUEST,
+    try {
+      const isPasswordMatching = await bcrypt.compare(
+        plainTextPassword,
+        hashedPassword,
       );
+
+      if (!isPasswordMatching) {
+        throw new HttpException(
+          'Wrong credentials provided',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(error);
     }
   }
 }

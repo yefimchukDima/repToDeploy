@@ -1,4 +1,10 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  InternalServerErrorException,
+  Post,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import UserLoginDTO from '../user/dto/login.dto';
@@ -36,14 +42,18 @@ export default class AuthController {
     const { id, email, mobile_number, first_name, last_name } =
       await this.authService.autheticateUser(data.login, data.password);
 
-    const token = await this.jwtService.signAsync({
-      id,
-      email,
-      mobile_number,
-      first_name,
-      last_name,
-    });
+    try {
+      const token = await this.jwtService.signAsync({
+        id,
+        email,
+        mobile_number,
+        first_name,
+        last_name,
+      });
 
-    return { id, email, mobile_number, first_name, last_name, token };
+      return { id, email, mobile_number, first_name, last_name, token };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }

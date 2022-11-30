@@ -33,10 +33,6 @@ async function bootstrap() {
   await app.listen(PORT, () => {
     Logger.warn(`Server started on http://localhost:${PORT}`);
   });
-
-  await setTimeout(() => {
-    throw new Error('test crash server');
-  }, 180000)
 }
 
 bootstrap();

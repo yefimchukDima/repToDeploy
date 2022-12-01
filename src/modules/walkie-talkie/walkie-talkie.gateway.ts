@@ -19,11 +19,11 @@ export type User = {
 type RequestBody = {
   targetId: number;
   audio: string;
-}
+};
 
 enum EVENTS {
   TALK = 'talk',
-  LISTEN = 'listen'
+  LISTEN = 'listen',
 }
 
 const NAMESPACE = 'walkie-talkie';
@@ -78,6 +78,10 @@ export default class WalkieTalkieGateway implements OnGatewayConnection {
   ) {
     if (!data.audio) throw new WsException('No audio string provided!');
     if (!data.targetId) throw new WsException('No user id provided!');
+    if (typeof data.audio !== 'string')
+      throw new WsException('Audio must be a string!');
+    if (typeof data.targetId !== 'number')
+      throw new WsException('Audio must be a number!');
 
     const uri = PCMtoWAV(data.audio);
     const toUser = this.connectedUsers.find((x) => +x.id === data.targetId);

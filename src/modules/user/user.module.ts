@@ -5,9 +5,8 @@ import PasswordResetTokenEntity from 'src/entities/password_reset_token.entity';
 import UserEntity from 'src/entities/user.entity';
 import VerificationCodeEntity from 'src/entities/verification_code.entity';
 import { UserIdExistsMiddleware } from 'src/modules/user/middlewares/userIdExists';
-import { UserPhoneExistsMiddleware } from 'src/modules/user/middlewares/userPhoneExists';
 import MessagesService from '../messages/messages.service';
-import { UserEmailExistsMiddleware } from './middlewares/userEmailPhoneExists';
+import { UserEmailPhoneExistsMiddleware } from './middlewares/userEmailPhoneExists';
 import UserController from './user.controller';
 import UserService from './user.service';
 
@@ -38,13 +37,10 @@ export default class UserModule {
       );
 
     consumer
-      .apply(UserEmailExistsMiddleware)
-      .forRoutes('users/get/email-phone/:emailPhone');
-
-    consumer
-      .apply(UserPhoneExistsMiddleware)
+      .apply(UserEmailPhoneExistsMiddleware)
       .forRoutes(
-        'users/user-has-email-or-password/:phone',
+        'users/get/email-phone/:emailPhone',
+        'users/user-has-email-or-phone/:phoneEmail',
       );
   }
 }

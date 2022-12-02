@@ -7,7 +7,7 @@ import { NextFunction, Request, Response } from 'express';
 import UserService from 'src/modules/user/user.service';
 
 @Injectable()
-export class UserEmailExistsMiddleware implements NestMiddleware {
+export class UserEmailPhoneExistsMiddleware implements NestMiddleware {
   constructor(private readonly userService: UserService) {}
 
   use(

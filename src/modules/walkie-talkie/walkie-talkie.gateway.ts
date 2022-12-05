@@ -88,6 +88,9 @@ export default class WalkieTalkieGateway implements OnGatewayConnection {
 
     if (!toUser) throw new WsException('Target user is not connected!');
 
-    socket.to(toUser.socketId).emit(EVENTS.LISTEN, uri);
+    socket.to(toUser.socketId).emit(EVENTS.LISTEN, {
+      sender: this.connectedUsers.find((x) => x.socketId === socket.id).id,
+      uri,
+    });
   }
 }

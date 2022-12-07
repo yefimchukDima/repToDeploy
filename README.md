@@ -53,57 +53,57 @@ $ ssh -i ~/.ssh/key.pem ubuntu@192.168.1.1
 ## Columns
 
 **User**
-id - PK AUTO_INCREMENT
-email - VARCHAR NULLABLE
-username - VARCHAR NULLABLE
-mobile_number - VARCHAR NULLABLE
-password - VARCHAR NULLABLE
-first_name - VARCHAR NULLABLE
-last_name - VARCHAR NULLABLE
-isAdmin - BOOLEAN DEFAULT FALSE
-isRegistered - BOOLEAN DEFAULT FALSE
-isVerified - BOOLEAN DEFAULT FALSE
-base64_image - VARCHAR NULLABLE
-created_at - DATE DEFAULT CURRENT_TIMESTAMP
-updated_at - DATE DEFAULT CURRENT_TIMESTAMP
+id - PK AUTO_INCREMENT<br>
+email - VARCHAR NULLABLE<br>
+username - VARCHAR NULLABLE<br>
+mobile_number - VARCHAR NULLABLE<br>
+password - VARCHAR NULLABLE<br>
+first_name - VARCHAR NULLABLE<br>
+last_name - VARCHAR NULLABLE<br>
+isAdmin - BOOLEAN DEFAULT FALSE<br>
+isRegistered - BOOLEAN DEFAULT FALSE<br>
+isVerified - BOOLEAN DEFAULT FALSE<br>
+base64_image - VARCHAR NULLABLE<br>
+created_at - DATE DEFAULT CURRENT_TIMESTAMP<br>
+updated_at - DATE DEFAULT CURRENT_TIMESTAMP<br>
 
 **Company**
-id - PK AUTO_INCREMENT
-mobile_number - VARCHAR
-website_url - VARCHAR
-url_id - VARCHAR NULLABLE
-name - VARCHAR
-keywords - VARCHAR[];
-created_at - DATE DEFAULT CURRENT_TIMESTAMP
-updated_at - DATE DEFAULT CURRENT_TIMESTAMP
-userId - INTEGER FK User
+id - PK AUTO_INCREMENT<br>
+mobile_number - VARCHAR<br>
+website_url - VARCHAR<br>
+url_id - VARCHAR NULLABLE<br>
+name - VARCHAR<br>
+keywords - VARCHAR[]<br>
+created_at - DATE DEFAULT CURRENT_TIMESTAMP<br>
+updated_at - DATE DEFAULT CURRENT_TIMESTAMP<br>
+userId - INTEGER FK User<br>
 
 **Department**
-id - PK AUTO_INCREMENT
-department - VARCHAR NULLABLE
-title - VARCHAR NULLABLE
-name - VARCHAR NULLABLE
-phone_number - VARCHAR
-email - VARCHAR NULLABLE
-image_url - VARCHAR NULLABLE
-created_at - DATE DEFAULT CURRENT_TIMESTAMP
-updated_at - DATE DEFAULT CURRENT_TIMESTAMP
-companyId - INTEGER FK Company
+id - PK AUTO_INCREMENT<br>
+department - VARCHAR NULLABLE<br>
+title - VARCHAR NULLABLE<br>
+name - VARCHAR NULLABLE<br>
+phone_number - VARCHAR<br>
+email - VARCHAR NULLABLE<br>
+image_url - VARCHAR NULLABLE<br>
+created_at - DATE DEFAULT CURRENT_TIMESTAMP<br>
+updated_at - DATE DEFAULT CURRENT_TIMESTAMP<br>
+companyId - INTEGER FK Company<br>
 
 **Verification Code**
-id - PK AUTO_INCREMENT
-code - VARCHAR 
-expTime - VARCHAR DEFAULT String(Math.floor(new Date().getTime() / 1000) + 300), // 5 minutes
-userId - INTEGER FK User
+id - PK AUTO_INCREMENT<br>
+code - VARCHAR <br>
+expTime - VARCHAR DEFAULT String(Math.floor(new Date().getTime() / 1000) + 300), // 5 minutes<br>
+userId - INTEGER FK User<br>
 
 **Password Reset Tokens**
-id - PK AUTO_INCREMENT
-token - VARCHAR
-userId - INTEGER FK User
+id - PK AUTO_INCREMENT<br>
+token - VARCHAR<br>
+userId - INTEGER FK User<br>
 
 **Chat Message**
-id - PK AUTO_INCREMENT
-content - VARCHAR 
-room - VARCHAR
-date - DATE DEFAULT CURRENT_TIMESTAMP(6)
-authorId - INTEGER FK User
+id - PK AUTO_INCREMENT<br>
+content - VARCHAR<br>
+room - VARCHAR<br>
+date - DATE DEFAULT CURRENT_TIMESTAMP(6)<br>
+authorId - INTEGER FK User<br>

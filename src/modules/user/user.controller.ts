@@ -106,15 +106,15 @@ export default class UserController {
     return user;
   }
 
-  @Post('/generate-verification-code/:phone')
+  @Post('/generate-verification-code')
   @ApiOperation({ summary: 'Generate a verification code' })
   @ApiResponse({
     type: VerificationCodeDTO,
   })
   async generateVerificationCode(
-    @Param('phone') phone: string,
+    @Query('login') login: string,
   ): Promise<VerificationCodeDTO> {
-    const code = await this.userService.generateVerificationCode(phone);
+    const code = await this.userService.generateVerificationCode(login);
 
     return code;
   }

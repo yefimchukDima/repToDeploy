@@ -210,32 +210,36 @@ export default class UserService {
         */
         const isExp = isVerificationCodeExpired(verificationCode);
 
-        if (!isExp) throw new ConflictException('Code already exists');
+        if (!isExp) return { code: verificationCode.code };
         try {
           await this.verificationCodeRepo.remove(verificationCode);
         } catch (e) {
           throw new InternalServerErrorException(e);
         }
       }
+
+      const code = Math.floor(1000 + Math.random() * 9000);
+      const instance = new VerificationCodeEntity();
+
+      instance.code = String(code);
+      instance.user = user;
+      instance.expTime = String(
+        Math.floor(new Date().getTime() / MILLISECONDS_TO_SECONDS) +
+          FIVE_MIN_TO_SECS,
+      );
+
+      try {
+        const res = await this.verificationCodeRepo.save(instance);
+
+        return { code: res.code };
+      } catch (e) {
+        throw new InternalServerErrorException(
+          VERIFICATION_CODE_GENERATION + e,
+        );
+      }
     }
 
-    const code = Math.floor(1000 + Math.random() * 9000);
-    const instance = new VerificationCodeEntity();
-
-    instance.code = String(code);
-    instance.user = user;
-    instance.expTime = String(
-      Math.floor(new Date().getTime() / MILLISECONDS_TO_SECONDS) +
-        FIVE_MIN_TO_SECS,
-    );
-
-    try {
-      const res = await this.verificationCodeRepo.save(instance);
-
-      return { code: res.code };
-    } catch (e) {
-      throw new InternalServerErrorException(VERIFICATION_CODE_GENERATION + e);
-    }
+    throw new NotFoundException('User not found!');
   }
 
   // Normal code verification
@@ -306,7 +310,7 @@ export default class UserService {
 
       const instance = new PasswordResetTokenEntity();
 
-      instance.token = await createPassword(user.mobile_number);
+      instance.token = await createPassword(JSON.stringify(user));
       instance.user = user;
 
       const resetToken = await this.passwordResetTokenRepo.save(instance);

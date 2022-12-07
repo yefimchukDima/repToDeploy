@@ -10,7 +10,7 @@ async function bootstrap() {
       origin: '*',
       allowedHeaders: '*',
       maxAge: 3600,
-      methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     },
   });
 

@@ -52,7 +52,7 @@ $ ssh -i ~/.ssh/key.pem ubuntu@192.168.1.1
 
 ## Columns
 
-**User**
+**User**<br>
 id - PK AUTO_INCREMENT<br>
 email - VARCHAR NULLABLE<br>
 username - VARCHAR NULLABLE<br>
@@ -67,7 +67,7 @@ base64_image - VARCHAR NULLABLE<br>
 created_at - DATE DEFAULT CURRENT_TIMESTAMP<br>
 updated_at - DATE DEFAULT CURRENT_TIMESTAMP<br>
 
-**Company**
+**Company**<br>
 id - PK AUTO_INCREMENT<br>
 mobile_number - VARCHAR<br>
 website_url - VARCHAR<br>
@@ -78,7 +78,7 @@ created_at - DATE DEFAULT CURRENT_TIMESTAMP<br>
 updated_at - DATE DEFAULT CURRENT_TIMESTAMP<br>
 userId - INTEGER FK User<br>
 
-**Department**
+**Department**<br>
 id - PK AUTO_INCREMENT<br>
 department - VARCHAR NULLABLE<br>
 title - VARCHAR NULLABLE<br>
@@ -90,18 +90,18 @@ created_at - DATE DEFAULT CURRENT_TIMESTAMP<br>
 updated_at - DATE DEFAULT CURRENT_TIMESTAMP<br>
 companyId - INTEGER FK Company<br>
 
-**Verification Code**
+**Verification Code**<br>
 id - PK AUTO_INCREMENT<br>
 code - VARCHAR <br>
 expTime - VARCHAR DEFAULT String(Math.floor(new Date().getTime() / 1000) + 300), // 5 minutes<br>
 userId - INTEGER FK User<br>
 
-**Password Reset Tokens**
+**Password Reset Tokens**<br>
 id - PK AUTO_INCREMENT<br>
 token - VARCHAR<br>
 userId - INTEGER FK User<br>
 
-**Chat Message**
+**Chat Message**<br>
 id - PK AUTO_INCREMENT<br>
 content - VARCHAR<br>
 room - VARCHAR<br>
